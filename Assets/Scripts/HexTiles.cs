@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ public enum TileColor
 
 public class HexTiles : MonoBehaviour
 {
-    [SerializeField] TileColor tileColor;
+    public TileColor tileColor;
     [SerializeField] List<MeshRenderer> singleTile;
     // Start is called before the first frame update
     void Start()
@@ -25,11 +26,5 @@ public class HexTiles : MonoBehaviour
         {
             t.GetComponent<MeshRenderer>().material = GameManager.Instance.tileMats[(int)tileColor];
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

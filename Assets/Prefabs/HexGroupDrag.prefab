@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9178618364157937994}
   - component: {fileID: 2259972859075197543}
-  - component: {fileID: 8406732297693679965}
+  - component: {fileID: -5165446934377533793}
   m_Layer: 0
   m_Name: HexGroupDrag
   m_TagString: Untagged
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3942158673699992258}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4.25}
+  m_LocalPosition: {x: 0, y: 2.5, z: -5.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -50,9 +50,11 @@ MonoBehaviour:
   GroupType: 0
   HexTiles: []
   oldPosition: {x: 0, y: 0, z: 0}
-  isTweening: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
   isDragging: 0
---- !u!65 &8406732297693679965
+--- !u!65 &-5165446934377533793
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

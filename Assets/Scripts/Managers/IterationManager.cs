@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Luna.Unity;
 
 public enum Iteration
 {
@@ -74,6 +75,7 @@ public class IterationManager : MonoBehaviour
 
     public void CompleteGame()
     {
+        Analytics.LogEvent(Analytics.EventType.LevelWon);
         CTAManager.Instance.OpenAppLink(false);
         CTAManager.Instance.ShowEndCard();
     }

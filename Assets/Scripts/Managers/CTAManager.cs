@@ -33,6 +33,8 @@ public class CTAManager : MonoBehaviour
     public void ShowEndCard()
     {
         if (GameOver) return;
+
+        Analytics.LogEvent(Analytics.EventType.EndCardShown);
         CTAPanel.SetActive(true);
         GameOver = true;
     }

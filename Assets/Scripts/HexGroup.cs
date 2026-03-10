@@ -1,28 +1,38 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum GroupType
 {
     None,
     Dropper,
     Dragger,
-    Replacer
+    Mixer
 }
 
 public class HexGroup : MonoBehaviour
 {
     [Header ("Basic Info")]
-    [SerializeField] GroupType GroupType;
-    [SerializeField] List<HexTiles> HexTiles = new List<HexTiles>();
+    public GroupType GroupType;
+    [SerializeField] LayerMask groundLayer;
+    public bool isTweening;
+    [SerializeField] List<HexTiles> HexTiles;
 
     [Header("Dragger Info")]
     [SerializeField] Vector3 oldPosition;
-    [SerializeField] bool isTweening;
     [SerializeField] bool isDragging;
+
+    [Header("Dropper Info")]
+    [SerializeField] bool occupied;
     private void Awake()
     {
+        oldPosition = transform.position;
+
         CheckHexTiles();
         TilesPosition();
     }
@@ -36,7 +46,6 @@ public class HexGroup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 
     public void CheckHexTiles()
@@ -58,51 +67,85 @@ public class HexGroup : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision col)
-    {
-    }
-
-    private void OnCollisionStay (Collision col)
-    {
-        if (GroupType != GroupType.Dragger) return;
-
-        if (Input.GetMouseButton(0))
-        {
-            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-        if (Input.GetMouseButtonUp(0) && GroupType == GroupType.Dragger)
-        {
-            transform.DOMove(Camera.main.ScreenToWorldPoint(oldPosition), 0.5f).OnUpdate(() => { isTweening = true; }).OnComplete(() => { isTweening = false; });
-            isDragging = false;
-        }
-    }
-
     private void OnMouseDown()
     {
         if (GroupType != GroupType.Dragger) return;
+        if (GameManager.Instance.currentHexDrag) return;
+        if (isTweening) return;
+        if (isDragging) return;
 
-        if (!isTweening)
+        GameManager.Instance.currentHexDrag = this;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100f, groundLayer))
         {
-            oldPosition = transform.position;
-            Debug.Log(oldPosition + " " + transform.position);
-            transform.DOMove(Camera.main.ScreenToWorldPoint(Input.mousePosition), 0.0625f).OnUpdate(() => { isTweening = true; }).OnComplete(() => { isTweening = false; });
-            isDragging = true;
+            transform.DOMove(hit.point, 0.25f).OnUpdate(() => { isTweening = true; }).OnComplete(() => { isTweening = false; });
         }
+        isDragging = true;
     }
 
     private void OnMouseDrag()
     {
         if (GroupType != GroupType.Dragger) return;
 
-        transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = new Vector3(transform.position.x, 2, transform.position.z);
+        if (!isTweening && isDragging)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, 100f, groundLayer))
+            {
+                transform.position = hit.point;
+            }
+        }
     }
 
     private void OnMouseUp()
     {
-        if (GroupType != GroupType.Dragger) return;
-
-        transform.DOMove(oldPosition, 0.5f).OnUpdate(() => { isTweening = true; }).OnComplete(() => { isTweening = false; });
         isDragging = false;
+        if (GameManager.Instance.currentHexDrag)
+        {
+            HexGroup dragger = GameManager.Instance.currentHexDrag;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray);
+
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.CompareTag("Dropper"))
+                {
+                    if (!hit.collider.GetComponent<HexGroup>().occupied)
+                    {
+                        dragger.transform.DOMove(hit.collider.transform.position, 0.5f).OnUpdate(() => { dragger.isTweening = true; }).OnComplete(() => { dragger.isTweening = false; });
+                        dragger.GroupType = GroupType.Mixer;
+                        hit.collider.GetComponent<HexGroup>().occupied = true;
+                        return;
+                    }
+                }
+            }
+            GameManager.Instance.currentHexDrag = null;
+
+            if (GroupType == GroupType.Dragger)
+            {
+                transform.DOKill();
+                transform.DOMove(oldPosition, 0.5f).OnUpdate(() =>
+                {
+                    isTweening = true;
+                }).OnComplete(() =>
+                {
+                    isTweening = false;
+                });
+            }
+        }
+    }
+
+    public void RandomizeTile()
+    {
+        int index0 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length);
+        HexTiles[0].tileColor = (TileColor)index0;
+        HexTiles[1].tileColor = (TileColor)index0;
+
+        int index1 = 0; //1 in 4 chance to have different color
+        if (UnityEngine.Random.Range(0, 3) == 0) { index1 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length); HexTiles[1].tileColor = (TileColor)index1; }
     }
 }
