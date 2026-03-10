@@ -23,31 +23,25 @@ public class HexGroup : MonoBehaviour
     public bool isTweening;
     [SerializeField] List<HexTiles> HexTiles;
 
-    [Header("Dragger Info")]
+    [Header("Drag & Drop")]
     [SerializeField] Vector3 oldPosition;
     [SerializeField] bool isDragging;
-
-    [Header("Dropper Info")]
     [SerializeField] bool occupied;
-    private void Awake()
-    {
-        oldPosition = transform.position;
 
-        CheckHexTiles();
-        TilesPosition();
-    }
+    [Header("Gameplay")]
+    public HexTiles topTile;
+    public int stackNum;
+    public bool transferring;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        oldPosition = transform.position;
+
+        CheckHexTiles();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
+    #region HexTiles
     public void CheckHexTiles()
     {
         HexTiles.Clear();
@@ -55,22 +49,34 @@ public class HexGroup : MonoBehaviour
         {
             if (t.GetComponent<HexTiles>()) { HexTiles.Add(t.GetComponent<HexTiles>()); }
         }
-    }
+        if (HexTiles.Count > 0)
+        {
+            topTile = HexTiles[HexTiles.Count - 1];
+            if (HexTiles.Count > 1) if (topTile.tileColor == HexTiles[HexTiles.Count - 2].tileColor) stackNum = 2; else stackNum = 1;
+        }
 
-    private void TilesPosition()
-    {
         int index = 0;
         foreach (HexTiles h in HexTiles)
         {
-            h.transform.localPosition = new Vector3(0, 0.2f + (0.6f  * index), 0);
+            h.transform.localPosition = new Vector3(0, 0.2f + (0.6f * index), 0);
             index++;
         }
     }
 
+    public void RandomizeTile()
+    {
+        int index0 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length);
+        HexTiles[0].tileColor = (TileColor)index0;
+        HexTiles[1].tileColor = (TileColor)index0;
+
+        int index1 = 0; //1 in 2 chance to have different color
+        if (UnityEngine.Random.Range(0, 2) == 0) { index1 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length); HexTiles[1].tileColor = (TileColor)index1; }
+    }
+    #endregion
+
     private void OnMouseDown()
     {
         if (GroupType != GroupType.Dragger) return;
-        if (GameManager.Instance.currentHexDrag) return;
         if (isTweening) return;
         if (isDragging) return;
 
@@ -107,19 +113,32 @@ public class HexGroup : MonoBehaviour
         if (GameManager.Instance.currentHexDrag)
         {
             HexGroup dragger = GameManager.Instance.currentHexDrag;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray);
-
-            foreach (RaycastHit hit in hits)
+            if (dragger.GroupType == GroupType.Dragger)
             {
-                if (hit.collider.CompareTag("Dropper"))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit[] hits = Physics.RaycastAll(ray);
+
+                foreach (RaycastHit hit in hits)
                 {
-                    if (!hit.collider.GetComponent<HexGroup>().occupied)
+                    if (hit.collider.CompareTag("Dropper"))
                     {
-                        dragger.transform.DOMove(hit.collider.transform.position, 0.5f).OnUpdate(() => { dragger.isTweening = true; }).OnComplete(() => { dragger.isTweening = false; });
-                        dragger.GroupType = GroupType.Mixer;
-                        hit.collider.GetComponent<HexGroup>().occupied = true;
-                        return;
+                        if (!hit.collider.GetComponent<HexGroup>().occupied)
+                        {
+                            dragger.transform.DOMove(hit.collider.transform.position, 0.5f).OnUpdate(() =>
+                            {
+                                dragger.isTweening = true;
+                            }).OnComplete(() =>
+                            {
+                                dragger.isTweening = false;
+                                dragger.GroupType = GroupType.Mixer;
+                                GameManager.Instance.currentMixers.Add(this);
+                                GameManager.Instance.CheckSimilarTopTiles();
+                            });
+                            dragger.transform.SetParent(hit.collider.transform.parent);
+                            GameManager.Instance.CheckDraggerCount();
+                            hit.collider.GetComponent<HexGroup>().occupied = true;
+                            return;
+                        }
                     }
                 }
             }
@@ -128,24 +147,14 @@ public class HexGroup : MonoBehaviour
             if (GroupType == GroupType.Dragger)
             {
                 transform.DOKill();
-                transform.DOMove(oldPosition, 0.5f).OnUpdate(() =>
-                {
-                    isTweening = true;
-                }).OnComplete(() =>
-                {
-                    isTweening = false;
-                });
+                transform.DOMove(oldPosition, 0.5f).OnUpdate(() => { isTweening = true; }).OnComplete(() => { isTweening = false; });
             }
         }
     }
 
-    public void RandomizeTile()
+    public void TransferTiles(HexGroup receiver)
     {
-        int index0 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length);
-        HexTiles[0].tileColor = (TileColor)index0;
-        HexTiles[1].tileColor = (TileColor)index0;
-
-        int index1 = 0; //1 in 4 chance to have different color
-        if (UnityEngine.Random.Range(0, 3) == 0) { index1 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length); HexTiles[1].tileColor = (TileColor)index1; }
+        topTile.TransferTiles(receiver.topTile.transform.position);
+        CheckHexTiles();
     }
 }

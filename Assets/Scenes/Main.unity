@@ -884,6 +884,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &74069550
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4867,9 +4869,13 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 2e1c2ca0a91eaf747ae9b178af058167, type: 2}
   - {fileID: 2100000, guid: 378714dd5a31d0f40a71a7fbde449f6b, type: 2}
   - {fileID: 2100000, guid: e8f41ce6b428f3a44a3b4a42bd2d376c, type: 2}
-  replacerParent: {fileID: 637134806}
   Ground: {fileID: 1888355181}
+  replacerParent: {fileID: 637134806}
+  currentMixers:
+  - {fileID: 2991238585631484375}
   currentHexDrag: {fileID: 0}
+  hexDragPrefab: {fileID: 3942158673699992258, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
+  hexDragParent: {fileID: 1687225121}
 --- !u!4 &370219378
 Transform:
   m_ObjectHideFlags: 0
@@ -5547,11 +5553,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11881,6 +11887,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &1041855852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12307,6 +12315,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &1057143620
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15328,6 +15338,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &1427314004
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16936,6 +16948,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &1556671919
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17574,7 +17588,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687225120}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.5, z: -5.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19371,6 +19385,8 @@ MonoBehaviour:
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   occupied: 0
+  topTile: {fileID: 0}
+  stackNum: 0
 --- !u!65 &1900222023
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19500,11 +19516,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22879,6 +22895,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5521221093101498093, guid: 78a7b0e70d190554e99fa2c2297c7956, type: 3}
   m_PrefabInstance: {fileID: 2991238585631484373}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2991238585631484375 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3407623498421146719, guid: 78a7b0e70d190554e99fa2c2297c7956, type: 3}
+  m_PrefabInstance: {fileID: 2991238585631484373}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acf2b02fa5266ec4cbd093b03d92d3d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4772214261058851432
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22913,11 +22940,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178618364157937994, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
       propertyPath: m_LocalRotation.w
