@@ -10,8 +10,13 @@ public class GameManager : MonoBehaviour
     [Header("Basic Info")]
     public List<Material> tileMats;
     public GameObject Ground;
-    [SerializeField] Transform replacerParent;
+    public Transform replacerParent;
+    public Transform hexNorth;
     public List<HexGroup> currentMixers;
+    public HexGroup currentReplacer;
+    public List<HexGroup> nearbyReplacerHexes;
+    public bool IsTransferring;
+    public bool firstFullStack;
 
     [Header ("Dragger Info")]
     public HexGroup currentHexDrag;
@@ -59,23 +64,24 @@ public class GameManager : MonoBehaviour
         {
             Ground.GetComponent<Collider>().enabled = false;
         }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ReplaceNewTiles();
-        }
     }
 
     public void ReplaceNewTiles()
     {
-        currentMixers.Remove(replacerParent.GetChild(0).GetComponent<HexGroup>());
-        Destroy(replacerParent.GetChild(0).gameObject);
-        currentMixers.Add(replacerParent.GetChild(0).GetComponent<HexGroup>());
-        replacerParent.GetChild(0).GetComponent<HexGroup>().GroupType = GroupType.Mixer;
+        currentMixers.Remove(currentReplacer);
+        HexGroup oldReplacer = currentReplacer;
+        currentReplacer = replacerParent.GetChild(0).GetComponent<HexGroup>();
+        currentMixers.Insert(0, currentReplacer);
+        Destroy(oldReplacer.gameObject);
+
         foreach (Transform t in replacerParent)
         {
             t.DOMoveZ(t.transform.position.z - 1.5f, 0.125f);
         }
+        currentReplacer.GetComponent<HexGroup>().GroupType = GroupType.Mixer;
+        currentReplacer.transform.SetParent(hexNorth);
+        currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
+        UpdateAllMixer();
     }
 
     public void CheckDraggerCount()
@@ -96,23 +102,44 @@ public class GameManager : MonoBehaviour
 
     public void CheckSimilarTopTiles()
     {
-        foreach(HexGroup giver in currentMixers)
+        UpdateAllMixer();
+        foreach (HexGroup giver in currentMixers)
         {
-            foreach (HexGroup receiver in currentMixers)
+            foreach (HexGroup receiver in giver.nearbyHex)
             {
-                if (receiver != giver && !giver.transferring)
+                receiver.CheckHexTiles();
+                giver.CheckHexTiles();
+                if (receiver != giver)
                 {
                     if (receiver.topTile.tileColor == giver.topTile.tileColor)
                     {
-                        Debug.Log("Giving " + giver.name + " to " + receiver);
+                        IsTransferring = true;
                         giver.TransferTiles(receiver);
-                        receiver.transferring = true;
-                        giver.transferring = true;
                         return;
                     }
                 }
             }
         }
+
+        firstFullStack = false;
+        foreach (HexGroup h in currentMixers)
+        {
+            h.CheckIfEmpty();
+            UpdateAllMixer();
+            h.CheckFullStack();
+            if (h.oneStack) { Debug.Log(h.name); }
+        }
+        IsTransferring = false;
         Debug.Log("No more similar top tiles");
+    }
+
+    public void UpdateAllMixer()
+    {
+        foreach (HexGroup group in currentMixers)
+        {
+            group.CheckIfEmpty();
+            group.CheckHexTiles();
+            group.UpdateNearbyTiles();
+        }
     }
 }

@@ -19,7 +19,7 @@ public enum TileColor
 public class HexTiles : MonoBehaviour
 {
     public TileColor tileColor;
-    [SerializeField] List<GameObject> singleTile;
+    public List<GameObject> singleTile;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,22 +29,46 @@ public class HexTiles : MonoBehaviour
         }
     }
 
-    public void TransferTiles(Vector3 target)
+    public int TransferTiles(Transform target, int index, bool second)
     {
-        int index = 0;
+        float sec = 0; if (second) { sec = 0.6f; }
         foreach (GameObject tile in singleTile)
         {
             tile.transform.LookAt(target); tile.transform.eulerAngles = new Vector3(270, tile.transform.eulerAngles.y, tile.transform.eulerAngles.z);
-            tile.transform.DORotate(new Vector3(90, tile.transform.eulerAngles.y, -tile.transform.eulerAngles.z), 0.375f).SetDelay(0.125f * index).OnComplete(() =>
+            tile.transform.DOJump(target.transform.position + ((Vector3.up * (0.6f + sec)) + (Vector3.up * 0.1f * index)), 1, 1, 0.125f).SetDelay(0.125f * index).OnComplete(() =>
             {
-                tile.transform.eulerAngles = Vector3.right * 270;
-            });
-            tile.transform.DOJump(target + ((Vector3.up * 0.6f) + (Vector3.up * 0.1f * index)), 1, 1, 0.375f).SetDelay(0.125f * index);
+                tile.transform.localEulerAngles = Vector3.right * 270;
+            }) ;
             index++;
         }
         transform.DOScale(1, 0f).SetDelay(0.125f * index).OnComplete(() =>
         {
-            GameManager.Instance.CheckSimilarTopTiles();
+            HexGroup oldParent = transform.parent.GetComponent<HexGroup>();
+            transform.SetParent(target.parent);
+            int i = 5;
+            foreach (GameObject tile in singleTile)
+            {
+                tile.transform.localPosition = Vector3.up * (0.1f * i);
+                i--;
+            }
+            transform.parent.GetComponent<HexGroup>().CheckHexTiles();
+            oldParent.CheckHexTiles();
+
+            oldParent.GetComponent<HexGroup>().CheckGiverTiles();
+            if (oldParent.secondTopTile)
+            {
+                if (this == oldParent.secondTopTile)
+                {
+                    GameManager.Instance.CheckSimilarTopTiles();
+                }
+            }
+            else
+            {
+                GameManager.Instance.CheckSimilarTopTiles();
+            }
+            //Debug.Log("Checking for more similar tiles");
+            //GameManager.Instance.CheckSimilarTopTiles();
         });
+        return index;
     }
 }
