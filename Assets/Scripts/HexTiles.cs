@@ -25,7 +25,7 @@ public class HexTiles : MonoBehaviour
     {
         foreach (Transform t in transform)
         {
-            t.GetComponent<MeshRenderer>().material = GameManager.Instance.tileMats[(int)tileColor];
+            t.GetComponentInChildren<MeshRenderer>().material = GameManager.Instance.tileMats[(int)tileColor];
         }
     }
 
@@ -34,10 +34,12 @@ public class HexTiles : MonoBehaviour
         float sec = 0; if (second) { sec = 0.6f; }
         foreach (GameObject tile in singleTile)
         {
-            tile.transform.LookAt(target); tile.transform.eulerAngles = new Vector3(270, tile.transform.eulerAngles.y, tile.transform.eulerAngles.z);
+            Transform childTile = tile.transform.GetChild(0);
+            //childTile.LookAt(target); childTile.transform.eulerAngles = new Vector3(270, childTile.transform.eulerAngles.y, childTile.transform.eulerAngles.z - 180);
+            childTile.transform.DORotate(new Vector3(90, childTile.transform.eulerAngles.y, childTile.transform.eulerAngles.z), 0.125f).SetDelay(0.125f * index);
             tile.transform.DOJump(target.transform.position + ((Vector3.up * (0.6f + sec)) + (Vector3.up * 0.1f * index)), 1, 1, 0.125f).SetDelay(0.125f * index).OnComplete(() =>
             {
-                tile.transform.localEulerAngles = Vector3.right * 270;
+                childTile.transform.localEulerAngles = Vector3.right * 270;
             }) ;
             index++;
         }
