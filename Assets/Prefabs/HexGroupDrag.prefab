@@ -47,18 +47,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf2b02fa5266ec4cbd093b03d92d3d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GroupType: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  isTweening: 0
+  GroupType: 0
+  Replacer: 0
   HexTiles:
   - {fileID: 824709437046039679}
   - {fileID: 8032937708775506171}
+  nearbyHex: []
+  isTweening: 0
+  oneColor: 0
+  oneStack: 0
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
-  occupied: 0
+  draggable: 1
   topTile: {fileID: 8032937708775506171}
+  secondTopTile: {fileID: 0}
+  thirdTopTile: {fileID: 0}
+  extraSameTiles: []
+  stackNum: 0
+  transferIndex: 0
 --- !u!65 &-5165446934377533793
 BoxCollider:
   m_ObjectHideFlags: 0
