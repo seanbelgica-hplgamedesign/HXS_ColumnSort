@@ -15,11 +15,36 @@ MonoBehaviour:
   clips:
   - key: BGM
     channel: 0
-    clip: {fileID: 8300000, guid: db180fc0bb4309e4bb433f806c37c442, type: 3}
+    clip: {fileID: 8300000, guid: 298f4d3a6a4e8f34cac2f77aa3464d06, type: 3}
     volume: 0.25
     loop: 1
-  - key: Click
+  - key: Pickup
     channel: 1
-    clip: {fileID: 8300000, guid: e978dd6a0937bc5498fcc2936e55279d, type: 3}
+    clip: {fileID: 8300000, guid: 7d1824bd1dbe2c7409c49dffdc5546b4, type: 3}
+    volume: 0.25
+    loop: 0
+  - key: PlaceDrag
+    channel: 1
+    clip: {fileID: 8300000, guid: 94bde0a3e6596a846889e99290888be3, type: 3}
+    volume: 0.25
+    loop: 0
+  - key: ReturnDrag
+    channel: 1
+    clip: {fileID: 8300000, guid: 0126460c97f202d4faf5579999e75ea0, type: 3}
+    volume: 0.25
+    loop: 0
+  - key: FullStack
+    channel: 1
+    clip: {fileID: 8300000, guid: 9e6b7ea619c7d97488e32b3630d0fe37, type: 3}
+    volume: 0.25
+    loop: 0
+  - key: Winner
+    channel: 1
+    clip: {fileID: 8300000, guid: 19a456fa1b4f97d4c8c40ee00e4f294a, type: 3}
+    volume: 0.25
+    loop: 0
+  - key: Fail
+    channel: 1
+    clip: {fileID: 8300000, guid: b12639d1f8a918540b9365f7b30edc1f, type: 3}
     volume: 0.25
     loop: 0

@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator WaitForTap()
     {
-        yield return new WaitUntil(() => (Input.GetMouseButtonDown(0) || Input.touchCount > 0));
+        yield return new WaitUntil(() => !TutorialManager.Instance.IntroAnim);
         AudioManager.Instance.PlayMusic("BGM");
     }
 
@@ -66,6 +66,12 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Ground.GetComponent<Collider>().enabled = false;
+        }
+
+        //Debug Mode
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ReplaceNewTiles();
         }
     }
 

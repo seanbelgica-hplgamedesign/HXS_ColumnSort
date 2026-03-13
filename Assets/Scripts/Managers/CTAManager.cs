@@ -42,6 +42,8 @@ public class CTAManager : MonoBehaviour
         WinPanel.GetComponent<RectTransform>().localScale = Vector3.zero;
         WinPanel.GetComponent<RectTransform>().DOScale(1, 0.25f);
         GameOver = true;
+
+        AudioManager.Instance.PlaySFX("Winner");
     }
 
     public void ShowLoseCard()
@@ -54,6 +56,8 @@ public class CTAManager : MonoBehaviour
         LosePanel.GetComponent<RectTransform>().localScale = Vector3.zero;
         LosePanel.GetComponent<RectTransform>().DOScale(1, 0.25f);
         GameOver = true;
+
+        AudioManager.Instance.PlaySFX("Fail");
     }
 
     public void OpenAppLink(bool ending)

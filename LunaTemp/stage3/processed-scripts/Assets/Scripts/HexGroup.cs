@@ -147,6 +147,8 @@ public class HexGroup : MonoBehaviour
         }
         TutorialManager.Instance.UpdateTutorialDragger(this);
         isDragging = true;
+
+        AudioManager.Instance.PlaySFX("Pickup");
     }
 
     private void OnMouseDrag()
@@ -155,13 +157,31 @@ public class HexGroup : MonoBehaviour
 
         if (!isTweening && isDragging)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 100f, groundLayer))
+            if (GameManager.Instance.currentHexDrag) 
             {
-                transform.position = hit.point;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit[] hits = Physics.RaycastAll(ray);
+
+                RaycastHit hit;
+                HexGroup dragger = GameManager.Instance.currentHexDrag;
+                foreach (RaycastHit h in hits)
+                {
+                    hit = h;
+                    if (hit.collider.CompareTag("Dropper"))
+                    {
+                        if (!hit.collider.GetComponentInParent<HexBase>().occupied)
+                        {
+                            dragger.transform.position = hit.collider.transform.position;
+                            return;
+                        }
+                    }
+                }
+                if (Physics.Raycast(ray, out hit, 100f, groundLayer))
+                {
+                    transform.position = hit.point;
+                }
             }
+
         }
     }
 
@@ -210,12 +230,16 @@ public class HexGroup : MonoBehaviour
                             hit.collider.GetComponentInParent<HexBase>().occupied = true;
                             transform.parent.GetComponentInParent<HexBase>().occupiedHex = dragger;
                             GameManager.Instance.UpdateAllMixer("Dropped");
+
+                            AudioManager.Instance.PlaySFX("PlaceDrag");
                             return;
                         }
                     }
                 }
             }
             GameManager.Instance.currentHexDrag = null;
+
+            AudioManager.Instance.PlaySFX("ReturnDrag");
 
             if (GroupType == GroupType.Dragger)
             {
@@ -253,7 +277,9 @@ public class HexGroup : MonoBehaviour
     public void RemoveStacks()
     {
         isEmptying = true;
-        Debug.Log("Emptying Stacks" + HexTiles.Count);
+        Debug.Log("Emptying Stacks - " + HexTiles.Count);
+
+        AudioManager.Instance.PlaySFX("FullStack");
         int index = 0;
         foreach (GameObject t in topTile.singleTile)
         {
@@ -291,6 +317,7 @@ public class HexGroup : MonoBehaviour
         {
             isEmptying = false;
             CheckHexTiles();
+            StartCoroutine(GameManager.Instance.DelayChecking());
             GameManager.Instance.UpdateAllMixer("RS");
         });
     }

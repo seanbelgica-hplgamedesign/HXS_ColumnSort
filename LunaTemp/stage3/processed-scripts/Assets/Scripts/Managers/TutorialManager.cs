@@ -11,6 +11,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] RectTransform tutorialText;
     [SerializeField] RectTransform tutorialTiles;
     [SerializeField] RectTransform handTool;
+    [SerializeField] Vector2 oldStarter;
     [SerializeField] Vector2 starterPos;
     [SerializeField] Vector2 baseP;
     [SerializeField] HexGroup dragger;
@@ -47,9 +48,9 @@ public class TutorialManager : MonoBehaviour
         if (GameManager.Instance.IsTransferring) return;
         foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) return;
 
-        currentTimer -= Time.deltaTime;
         if (!IntroAnim && !CTAManager.Instance.GameOver)
         {
+            currentTimer -= Time.deltaTime;
             if (currentTimer < 0 && !timerCalled)
             {
                 DraggerToFreeBase();
@@ -60,7 +61,7 @@ public class TutorialManager : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     handTool.DOKill();
-                    baseP = GetRandomBase();
+                    if (oldStarter != starterPos) { baseP = GetRandomBase(); }
 
                     int x = 0;
                     foreach (HexGroup drag in GameManager.Instance.hexDraggers)
@@ -123,22 +124,45 @@ public class TutorialManager : MonoBehaviour
         if (IntroAnim)
         {
             starterPos = dragPos[1].anchoredPosition;
+            handTool.anchoredPosition = starterPos;
         }
         else
         {
             dragger = null;
             while (true)
             {
+                foreach (HexBase b in GameManager.Instance.hexBases)
+                {
+                    if (b.occupied)
+                    {
+                        int index = 0;
+                        foreach (HexGroup drag in GameManager.Instance.hexDraggers)
+                        {
+                            if (drag != GameManager.Instance.emptyDrag && drag.topTile.tileColor == b.occupiedHex.topTile.tileColor)
+                            {
+                                dragger = GameManager.Instance.hexDraggers[index];
+                                starterPos = dragPos[index].anchoredPosition;
+                                handTool.anchoredPosition = starterPos;
+                                oldStarter = starterPos;
+                                return;
+                            }
+                            index++;
+                        }
+                    }
+                }
+
+                Debug.Log("Choosing random hand");
                 int x = Random.Range(0, dragPos.Count);
                 if (GameManager.Instance.hexDraggers[x] != GameManager.Instance.emptyDrag)
                 {
                     dragger = GameManager.Instance.hexDraggers[x];
                     starterPos = dragPos[x].anchoredPosition;
-                    break;
+                    handTool.anchoredPosition = starterPos;
+                    oldStarter = starterPos;
+                    return;
                 }
             }
         }
-        handTool.anchoredPosition = starterPos;
     }
 
     public Vector2 GetRandomBase()
@@ -206,5 +230,22 @@ public class TutorialManager : MonoBehaviour
     public void UpdateTutorialDragger(HexGroup d)
     {
         dragger = d;
+
+        int index = 0;
+        foreach (HexGroup hex in GameManager.Instance.hexDraggers)
+        {
+            if (d == hex)
+            {
+                starterPos = dragPos[index].anchoredPosition;
+
+                if (oldStarter != starterPos)
+                {
+                    oldStarter = starterPos;
+                    baseP = GetRandomBase();
+                } 
+                return;
+            }
+            index++;
+        }
     }
 }

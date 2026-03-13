@@ -40,7 +40,7 @@ public class HexTiles : MonoBehaviour
             Sequence seq = DOTween.Sequence();
             seq.Insert(0.125f * index, tile.transform.DOJump(target.transform.position + ((Vector3.up * (0.6f + sec)) + (Vector3.up * 0.1f * index)), 1, 1, 0.125f).OnComplete(() =>
             {
-                childTile.transform.localEulerAngles = Vector3.right * 270;
+                childTile.transform.eulerAngles = Vector3.right * 270;
             }));
             seq.Insert(0.125f * index, childTile.transform.DORotate(new Vector3(90, childTile.transform.eulerAngles.y, childTile.transform.eulerAngles.z), 0.125f));
 
@@ -60,6 +60,7 @@ public class HexTiles : MonoBehaviour
             transform.parent.GetComponent<HexGroup>().CheckHexTiles();
             oldParent.GetComponent<HexGroup>().CheckHexTiles();
             GameManager.Instance.UpdateAllMixer("Transfer");
+
 
             if (oldParent.secondTopTile)
             {
