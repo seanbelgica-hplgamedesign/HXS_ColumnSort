@@ -59,6 +59,7 @@ MonoBehaviour:
   isTweening: 0
   oneColor: 0
   oneStack: 0
+  isEmptying: 0
   oldPosition: {x: 0, y: 0, z: 0}
   isDragging: 0
   draggable: 1
@@ -111,7 +112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.8
+      value: 1.225
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_LocalPosition.z

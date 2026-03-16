@@ -11,6 +11,8 @@ public class CTAManager : MonoBehaviour
     public bool GameOver;
     [SerializeField] CanvasGroup WinPanel;
     [SerializeField] CanvasGroup LosePanel;
+    [SerializeField] RectTransform playNow;
+    [SerializeField] RectTransform tryAgain;
 
     [Header("Links")]
     [SerializeField] string iosLink;
@@ -41,6 +43,7 @@ public class CTAManager : MonoBehaviour
         WinPanel.alpha = 1;
         WinPanel.GetComponent<RectTransform>().localScale = Vector3.zero;
         WinPanel.GetComponent<RectTransform>().DOScale(1, 0.25f);
+        playNow.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         GameOver = true;
 
         AudioManager.Instance.PlaySFX("Winner");
@@ -55,6 +58,7 @@ public class CTAManager : MonoBehaviour
         LosePanel.alpha = 1;
         LosePanel.GetComponent<RectTransform>().localScale = Vector3.zero;
         LosePanel.GetComponent<RectTransform>().DOScale(1, 0.25f);
+        tryAgain.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         GameOver = true;
 
         AudioManager.Instance.PlaySFX("Fail");

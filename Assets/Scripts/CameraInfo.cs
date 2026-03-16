@@ -13,6 +13,7 @@ public class CameraInfo : MonoBehaviour
     Vector3[] TargetPositions;
     Quaternion[] TargetRotations;
     [SerializeField] float[] pathDurations;
+    [SerializeField] float introTime;
 
     public bool IntroCamera;
 
@@ -56,8 +57,8 @@ public class CameraInfo : MonoBehaviour
             TargetRotations[i] = TargetPaths[i].rotation;
         }
 
-        pathDurations = GetWaypointDurations(TargetPositions, 5f);
-        transform.DOPath(TargetPositions, 5f, PathType.Linear, PathMode.Full3D, 10, null).OnWaypointChange(ChangeRotation).OnComplete(() =>
+        pathDurations = GetWaypointDurations(TargetPositions, introTime);
+        transform.DOPath(TargetPositions, introTime, PathType.Linear, PathMode.Full3D, 10, null).OnWaypointChange(ChangeRotation).OnComplete(() =>
         {
             IntroCamera = false;
         });

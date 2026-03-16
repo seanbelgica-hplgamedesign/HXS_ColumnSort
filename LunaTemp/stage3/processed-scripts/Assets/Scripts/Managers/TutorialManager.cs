@@ -51,10 +51,24 @@ public class TutorialManager : MonoBehaviour
         if (!IntroAnim && !CTAManager.Instance.GameOver)
         {
             currentTimer -= Time.deltaTime;
-            if (currentTimer < 0 && !timerCalled)
+            if (currentTimer < 0)
             {
-                DraggerToFreeBase();
-                timerCalled = true;
+                if (!timerCalled)
+                {
+                    DraggerToFreeBase();
+                    timerCalled = true;
+                }
+                else
+                {
+                    if (currentTimer < -4f)
+                    {
+                        currentTimer = 1;
+                        handTool.GetComponent<CanvasGroup>().DOFade(0, 1f).OnComplete(() =>
+                        {
+                            timerCalled = false;
+                        });
+                    }
+                }
             }
             if (GameManager.Instance.currentHexDrag)
             {
@@ -79,7 +93,6 @@ public class TutorialManager : MonoBehaviour
                     handTool.anchoredPosition = baseP;
                 }
             }
-            if (Input.GetMouseButtonUp(0)) { ResetTimer(); }
         }
     }
 
@@ -152,14 +165,37 @@ public class TutorialManager : MonoBehaviour
                 }
 
                 Debug.Log("Choosing random hand");
-                int x = Random.Range(0, dragPos.Count);
-                if (GameManager.Instance.hexDraggers[x] != GameManager.Instance.emptyDrag)
+                while (true)
                 {
-                    dragger = GameManager.Instance.hexDraggers[x];
-                    starterPos = dragPos[x].anchoredPosition;
-                    handTool.anchoredPosition = starterPos;
-                    oldStarter = starterPos;
-                    return;
+                    int x = Random.Range(0, dragPos.Count);
+                    if (GameManager.Instance.hexDraggers[x].GroupType != GroupType.None)
+                    {
+                        dragger = GameManager.Instance.hexDraggers[x];
+                        starterPos = dragPos[x].anchoredPosition;
+                        handTool.anchoredPosition = starterPos;
+                        oldStarter = starterPos;
+                        return;
+                    }
+                    //foreach (HexGroup drag in GameManager.Instance.hexDraggers)
+                    //{
+                    //    if (drag == GameManager.Instance.hexDraggers[x])
+                    //    {
+                    //        if (drag.GroupType != GroupType.None)
+                    //        {
+                    //            dragger = GameManager.Instance.hexDraggers[x];
+                    //            starterPos = dragPos[x].anchoredPosition;
+                    //            handTool.anchoredPosition = starterPos;
+                    //            oldStarter = starterPos;
+                    //            return;
+                    //        }
+                    //    }
+                    //}
+                    //Debug.Log("Did not find anything, going for default, not supposed to be possible");
+                    //dragger = GameManager.Instance.hexDraggers[x];
+                    //starterPos = dragPos[x].anchoredPosition;
+                    //handTool.anchoredPosition = starterPos;
+                    //oldStarter = starterPos;
+                    //return;
                 }
             }
         }
@@ -200,11 +236,31 @@ public class TutorialManager : MonoBehaviour
             }
 
             //No possible nearby
-            int x = Random.Range(0, basePos.Count);
-            if (!GameManager.Instance.hexBases[x].occupied)
+            while (true)
             {
-                target = basePos[x].anchoredPosition;
-                return target;
+                int x = Random.Range(0, basePos.Count);
+                if (!GameManager.Instance.hexBases[x].occupied)
+                {
+                    target = basePos[x].anchoredPosition;
+                    return target;
+                }
+                //foreach (HexBase bases in GameManager.Instance.hexBases)
+                //{
+                //    if (bases == GameManager.Instance.hexBases[x])
+                //    {
+                //        if (!GameManager.Instance.hexBases[x].occupied)
+                //        {
+                //            target = basePos[x].anchoredPosition;
+                //            return target;
+                //        }
+                //    }
+                //}
+                //Debug.Log("Did not find anything, going for default, not supposed to be possible");
+                //if (!GameManager.Instance.hexBases[x].occupied)
+                //{
+                //    target = basePos[x].anchoredPosition;
+                //    return target;
+                //}
             }
         }
     }

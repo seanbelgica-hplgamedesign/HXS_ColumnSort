@@ -8,16 +8,19 @@ public class HexBase : MonoBehaviour
     public List<HexBase> nearbyBases;
     public HexGroup occupiedHex;
     public bool occupied;
+    public ParticleSystem sparkleVFX;
+    public Material originalColor;
+    public Material clickedColor;
 
-    // Start is called before the first frame update
-    void Start()
+    public void ChangeColor(bool clicked)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (clicked)
+        {
+            transform.GetChild(0).GetComponent<MeshRenderer>().material = clickedColor;
+        }
+        else
+        {
+            transform.GetChild(0).GetComponent<MeshRenderer>().material = originalColor;
+        }
     }
 }

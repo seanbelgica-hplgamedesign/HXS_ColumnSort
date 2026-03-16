@@ -48,3 +48,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: b12639d1f8a918540b9365f7b30edc1f, type: 3}
     volume: 0.25
     loop: 0
+  - key: Transfer
+    channel: 1
+    clip: {fileID: 8300000, guid: 607bd7d2b4160f948a4d2706805cb2e7, type: 3}
+    volume: 0.125
+    loop: 0

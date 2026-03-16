@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
             currentReplacer.GetComponent<HexGroup>().GroupType = GroupType.Mixer;
             currentReplacer.transform.SetParent(hexNorth);
             currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
-            StartCoroutine(DelayChecking());
+            CheckSimilarTopTiles();
             UpdateAllMixer("RNT");
         }
         else
@@ -114,18 +114,18 @@ public class GameManager : MonoBehaviour
                 g.GetComponent<HexGroup>().RandomizeTile();
                 g.transform.transform.localPosition = new Vector3(-1.75f + (i * 1.75f), 0, 0);
                 g.transform.localScale = Vector3.zero;
-                g.transform.DOScale(1, 0.25f);
+                g.transform.DOScale(1, 1f);
 
                 hexDraggers.Add(g.GetComponent<HexGroup>());
             }
         }
     }
 
-    public IEnumerator DelayChecking()
-    {
-        yield return new WaitForEndOfFrame();
-        CheckSimilarTopTiles();
-    }
+    //public IEnumerator DelayChecking()
+    //{
+    //    yield return new WaitForEndOfFrame();
+    //    CheckSimilarTopTiles();
+    //}
 
     public void CheckSimilarTopTiles()
     {
@@ -176,7 +176,6 @@ public class GameManager : MonoBehaviour
 
     public void UpdateAllMixer(string name)
     {
-        Debug.Log("From: " + name);
         foreach (HexGroup group in currentMixers)
         {
             group.CheckHexTiles();
