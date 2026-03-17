@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
                 g.GetComponent<HexGroup>().RandomizeTile();
                 g.transform.transform.localPosition = new Vector3(-1.75f + (i * 1.75f), 0, 0);
                 g.transform.localScale = Vector3.zero;
-                g.transform.DOScale(1, 1f);
+                g.transform.DOScale(1, 0.75f);
 
                 hexDraggers.Add(g.GetComponent<HexGroup>());
             }
@@ -126,6 +126,13 @@ public class GameManager : MonoBehaviour
     //    yield return new WaitForEndOfFrame();
     //    CheckSimilarTopTiles();
     //}
+
+    public IEnumerator DelayTransferring()
+    {
+        yield return new WaitUntil(() => !IsTransferring);
+
+        CheckSimilarTopTiles();
+    }
 
     public void CheckSimilarTopTiles()
     {
@@ -141,6 +148,7 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateAllMixer("CSMT1");
+
         foreach (HexGroup giver in currentMixers)
         {
             foreach (HexGroup receiver in giver.nearbyHex)
@@ -161,14 +169,11 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-        firstFullStack = false;
         foreach (HexGroup mixer in currentMixers)
         {
             mixer.CheckFullStack();
         }
-        if (firstFullStack) return;
-        UpdateAllMixer("CSMT2");
+        UpdateAllMixer("CSMT3");
 
         Debug.Log("No more similar top tiles");
         StartCoroutine(CheckAllOccupied());
@@ -176,9 +181,26 @@ public class GameManager : MonoBehaviour
 
     public void UpdateAllMixer(string name)
     {
+        currentMixers.Clear();
+        foreach (HexBase bases in hexBases)
+        {
+            if (bases.occupied)
+            {
+                if (bases.occupiedHex.Replacer)
+                {
+                    currentMixers.Insert(0, bases.occupiedHex);
+                }
+                else
+                {
+                    currentMixers.Add(bases.occupiedHex);
+                }
+            }
+        }
+
         foreach (HexGroup group in currentMixers)
         {
             group.CheckHexTiles();
+            group.CheckIfEmpty();
         }
         foreach (HexGroup group in currentMixers)
         {
@@ -193,7 +215,7 @@ public class GameManager : MonoBehaviour
         bool allOccupied = true;
         foreach (HexBase h in hexBases)
         {
-            if (!h.occupied) { allOccupied = false; Debug.Log(h.name); break; }
+            if (!h.occupied) { allOccupied = false; break; }
         }
 
         if (allOccupied)

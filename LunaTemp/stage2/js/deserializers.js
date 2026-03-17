@@ -700,42 +700,46 @@ Deserializers["HexGroup"] = function (request, data, root) {
   i586.GroupType = i587[0]
   i586.Replacer = !!i587[1]
   var i589 = i587[2]
-  var i588 = new (System.Collections.Generic.List$1(Bridge.ns('HexGroup')))
+  var i588 = new (System.Collections.Generic.List$1(Bridge.ns('HexTiles')))
   for(var i = 0; i < i589.length; i += 2) {
   request.r(i589[i + 0], i589[i + 1], 1, i588, '')
   }
-  i586.nearbyHex = i588
-  i586.isTweening = !!i587[3]
-  i586.oneColor = !!i587[4]
-  i586.oneStack = !!i587[5]
-  i586.isEmptying = !!i587[6]
-  i586.draggable = !!i587[7]
-  request.r(i587[8], i587[9], 0, i586, 'topTile')
-  request.r(i587[10], i587[11], 0, i586, 'secondTopTile')
-  request.r(i587[12], i587[13], 0, i586, 'thirdTopTile')
-  var i591 = i587[14]
-  var i590 = new (System.Collections.Generic.List$1(Bridge.ns('HexTiles')))
+  i586.HexTiles = i588
+  var i591 = i587[3]
+  var i590 = new (System.Collections.Generic.List$1(Bridge.ns('HexGroup')))
   for(var i = 0; i < i591.length; i += 2) {
   request.r(i591[i + 0], i591[i + 1], 1, i590, '')
   }
-  i586.extraSameTiles = i590
-  i586.stackNum = i587[15]
-  i586.transferIndex = i587[16]
+  i586.nearbyHex = i590
+  i586.isTweening = !!i587[4]
+  i586.oneColor = !!i587[5]
+  i586.oneStack = !!i587[6]
+  i586.isEmptying = !!i587[7]
+  i586.hasSecond = !!i587[8]
+  i586.readyForMerge = !!i587[9]
+  i586.draggable = !!i587[10]
+  request.r(i587[11], i587[12], 0, i586, 'topTile')
+  request.r(i587[13], i587[14], 0, i586, 'secondTopTile')
+  request.r(i587[15], i587[16], 0, i586, 'thirdTopTile')
   var i593 = i587[17]
   var i592 = new (System.Collections.Generic.List$1(Bridge.ns('HexTiles')))
   for(var i = 0; i < i593.length; i += 2) {
   request.r(i593[i + 0], i593[i + 1], 1, i592, '')
   }
-  i586.disappearingTiles = i592
-  i586.groundLayer = UnityEngine.LayerMask.FromIntegerValue( i587[18] )
-  var i595 = i587[19]
+  i586.extraSameTiles = i592
+  i586.stackNum = i587[18]
+  i586.transferIndex = i587[19]
+  var i595 = i587[20]
   var i594 = new (System.Collections.Generic.List$1(Bridge.ns('HexTiles')))
   for(var i = 0; i < i595.length; i += 2) {
   request.r(i595[i + 0], i595[i + 1], 1, i594, '')
   }
-  i586.HexTiles = i594
-  i586.oldPosition = new pc.Vec3( i587[20], i587[21], i587[22] )
-  i586.isDragging = !!i587[23]
+  i586.disappearingTiles = i594
+  i586.groundLayer = UnityEngine.LayerMask.FromIntegerValue( i587[21] )
+  i586.oldPosition = new pc.Vec3( i587[22], i587[23], i587[24] )
+  i586.isDragging = !!i587[25]
+  i586.TransferTime = i587[26]
+  i586.TransferDelay = i587[27]
   return i586
 }
 
@@ -762,6 +766,7 @@ Deserializers["HexTiles"] = function (request, data, root) {
   i602.singleTile = i604
   i602.perTiles = i603[2]
   i602.perSingleTiles = i603[3]
+  i602.sequenceDuration = i603[4]
   return i602
 }
 
@@ -1791,7 +1796,7 @@ Deserializers.productName = "HXS_ColumnSort";
 
 Deserializers.lunaInitializationTime = "03/13/2026 07:02:06";
 
-Deserializers.lunaDaysRunning = "3.2";
+Deserializers.lunaDaysRunning = "4.2";
 
 Deserializers.lunaVersion = "6.3.0";
 
@@ -1847,7 +1852,7 @@ Deserializers.graphicsConstraint = 28;
 
 Deserializers.linearColorSpace = false;
 
-Deserializers.buildID = "aedf9658-b551-4a73-a047-18f1f00e2361";
+Deserializers.buildID = "3e10f933-4457-423b-b3e4-ef532ce1ae0b";
 
 Deserializers.runtimeInitializeOnLoadInfos = [[["UnityEngine","Experimental","Rendering","ScriptableRuntimeReflectionSystemSettings","ScriptingDirtyReflectionSystemInstance"]],[["Unity","VisualScripting","RuntimeVSUsageUtility","RuntimeInitializeOnLoadBeforeSceneLoad"]],[],[],[]];
 

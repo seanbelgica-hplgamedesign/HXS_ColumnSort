@@ -69,6 +69,9 @@ MonoBehaviour:
   extraSameTiles: []
   stackNum: 0
   transferIndex: 0
+  TransferTime: 0.1875
+  TransferDelay: 0.046875
+  disappearingTiles: []
 --- !u!65 &-5165446934377533793
 BoxCollider:
   m_ObjectHideFlags: 0

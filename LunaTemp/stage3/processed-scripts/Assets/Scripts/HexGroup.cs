@@ -18,12 +18,14 @@ public class HexGroup : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     public GroupType GroupType;
     public bool Replacer;
-    [SerializeField] List<HexTiles> HexTiles;
+    public List<HexTiles> HexTiles;
     public List<HexGroup> nearbyHex;
     public bool isTweening;
     public bool oneColor;
     public bool oneStack;
     public bool isEmptying;
+    public bool hasSecond;
+    public bool readyForMerge;
 
     [Header("Drag & Drop")]
     [SerializeField] Vector3 oldPosition;
@@ -36,7 +38,11 @@ public class HexGroup : MonoBehaviour
     public HexTiles thirdTopTile;
     public List<HexTiles> extraSameTiles;
     public int stackNum;
+
+    [Header("Transfer")]
     public int transferIndex;
+    [SerializeField] float TransferTime;
+    [SerializeField] float TransferDelay;
     public List<HexTiles> disappearingTiles;
 
     // Start is called before the first frame update
@@ -62,6 +68,8 @@ public class HexGroup : MonoBehaviour
         topTile = null;
         secondTopTile = null;
         thirdTopTile = null;
+        hasSecond = false;
+        readyForMerge = false;
         extraSameTiles.Clear();
         stackNum = 0;
         if (HexTiles.Count > 0)
@@ -74,12 +82,14 @@ public class HexGroup : MonoBehaviour
                 {
                     stackNum = 2;
                     secondTopTile = HexTiles[HexTiles.Count - 2];
+                    hasSecond = true;
                     if (HexTiles.Count > 2)
                     {
                         if (topTile.tileColor == HexTiles[HexTiles.Count - 3].tileColor)
                         {
                             stackNum = 3;
                             thirdTopTile = HexTiles[HexTiles.Count - 3];
+                            readyForMerge = true;
                             while (true)
                             {
                                 if (HexTiles.Count > stackNum)
@@ -89,15 +99,8 @@ public class HexGroup : MonoBehaviour
                                         stackNum++;
                                         extraSameTiles.Add(HexTiles[HexTiles.Count - stackNum]);
                                     }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                    else { break; } }
+                                else { break; }
                             }
                         }
                     }
@@ -137,8 +140,9 @@ public class HexGroup : MonoBehaviour
         if (!draggable) { return; }
         if (isTweening) return;
         if (isDragging) return;
+        foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) return;
 
-        GameManager.Instance.currentHexDrag = this;
+                GameManager.Instance.currentHexDrag = this;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -173,6 +177,11 @@ public class HexGroup : MonoBehaviour
 
                 RaycastHit hit;
                 HexGroup dragger = GameManager.Instance.currentHexDrag;
+                if (Physics.Raycast(ray, out hit, 100f, groundLayer))
+                {
+                    transform.position = hit.point;
+                }
+
                 foreach (RaycastHit h in hits)
                 {
                     hit = h;
@@ -180,15 +189,11 @@ public class HexGroup : MonoBehaviour
                     {
                         if (!hit.collider.GetComponentInParent<HexBase>().occupied)
                         {
-                            dragger.transform.position = hit.collider.transform.position + (Vector3.up * 1.25f);
+                            //dragger.transform.position = hit.collider.transform.position + (Vector3.up * 1.25f);
                             hit.collider.GetComponent<HexBase>().ChangeColor(true);
                             return;
                         }
                     }
-                }
-                if (Physics.Raycast(ray, out hit, 100f, groundLayer))
-                {
-                    transform.position = hit.point;
                 }
             }
 
@@ -199,6 +204,11 @@ public class HexGroup : MonoBehaviour
     {
         isDragging = false;
         TutorialManager.Instance.ResetTimer();
+
+        foreach (HexBase bases in GameManager.Instance.hexBases)
+        {
+            bases.ChangeColor(false);
+        }
         if (GameManager.Instance.currentHexDrag)
         {
             IterationManager.Instance.AddClick();
@@ -216,14 +226,16 @@ public class HexGroup : MonoBehaviour
                         {
                             dragger.transform.DOMove(hit.collider.transform.position, 0.375f).SetEase(Ease.InBack).OnStart(() =>
                             {
-                                GameManager.Instance.IsTransferring = true;
                                 dragger.isTweening = true;
                             }).OnComplete(() =>
                             {
-                                GameManager.Instance.IsTransferring = false;
                                 dragger.isTweening = false;
                                 dragger.GroupType = GroupType.Mixer;
                                 GameManager.Instance.currentMixers.Add(this);
+
+                                hit.collider.GetComponentInParent<HexBase>().occupied = true;
+                                transform.parent.GetComponentInParent<HexBase>().occupiedHex = dragger;
+                                GameManager.Instance.UpdateAllMixer("Dropped");
                                 GameManager.Instance.CheckSimilarTopTiles();
                             });
                             dragger.transform.SetParent(hit.collider.transform);
@@ -237,11 +249,6 @@ public class HexGroup : MonoBehaviour
                             }
                             GameManager.Instance.currentHexDrag = null;
                             GameManager.Instance.CheckDraggerCount();
-
-                            hit.collider.GetComponentInParent<HexBase>().occupied = true;
-                            hit.collider.GetComponent<HexBase>().ChangeColor(false);
-                            transform.parent.GetComponentInParent<HexBase>().occupiedHex = dragger;
-                            GameManager.Instance.UpdateAllMixer("Dropped");
 
                             AudioManager.Instance.PlaySFX("PlaceDrag");
                             return;
@@ -271,91 +278,136 @@ public class HexGroup : MonoBehaviour
     {
         transferIndex = 0;
         transferIndex = topTile.TransferTiles(receiver.topTile.transform, transferIndex, false);
-        if (secondTopTile) { transferIndex = secondTopTile.TransferTiles(topTile.transform, transferIndex, true); }
+        if (secondTopTile) { transferIndex = secondTopTile.TransferTiles(receiver.topTile.transform, transferIndex, true); }
     }
 
     public void CheckFullStack()
     {
         CheckHexTiles();
-
-        if (stackNum >= 3)// && oneColor)
+        if (readyForMerge)// && oneColor)
         {
             if (!GameManager.Instance.firstFullStack)
             {
                 GameManager.Instance.firstFullStack = true;
                 oneStack = true;
             }
-            RemoveStacks();
+            StartCoroutine(RemoveStacks());
         }
 
     }
 
-    public void RemoveStacks()
+    public IEnumerator RemoveStacks()
     {
         isEmptying = true;
-        disappearingTiles.Clear();
+        yield return new WaitForSeconds(0.125f);
 
-        AudioManager.Instance.PlaySFX("FullStack");
         int index = 0;
         float lastPosY = 0;
         foreach (GameObject t in topTile.singleTile)
         {
-            t.transform.DOScale(0, 0.03125f).SetDelay(0.015625f * index);
+            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+            {
+                AudioManager.Instance.PlaySFX("Pickup");
+            }).OnComplete(() =>
+            {
+                t.transform.localScale = Vector3.zero;
+            });
             index++;
         }
         disappearingTiles.Add(topTile);
-        transform.DOScale(1, 0).SetDelay(0.015625f * index).OnStart(() => { HexTiles.Remove(topTile); }).OnComplete(() => {
-            disappearingTiles.Remove(topTile); Destroy(topTile.gameObject); }); index++;
+        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(topTile); });
         foreach (GameObject t in secondTopTile.singleTile)
         {
-            t.transform.DOScale(0, 0.03125f).SetDelay(0.015625f * index);
+            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+            {
+                AudioManager.Instance.PlaySFX("Pickup");
+            }).OnComplete(() =>
+            {
+                t.transform.localScale = Vector3.zero;
+            });
             index++;
         }
         disappearingTiles.Add(secondTopTile);
-        transform.DOScale(1, 0).SetDelay(0.015625f * index).OnStart(() => { HexTiles.Remove(secondTopTile); }).OnComplete(() => {
-            disappearingTiles.Remove(secondTopTile); Destroy(secondTopTile.gameObject); }); index++;
+        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(secondTopTile); });
         foreach (GameObject t in thirdTopTile.singleTile)
         {
-            t.transform.DOScale(0, 0.03125f).SetDelay(0.015625f * index); lastPosY = t.transform.position.y;
+            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+            {
+                AudioManager.Instance.PlaySFX("Pickup");
+            }).OnComplete(() =>
+            {
+                t.transform.localScale = Vector3.zero;
+            }); lastPosY = t.transform.position.y;
             index++;
         }
         disappearingTiles.Add(thirdTopTile);
-        transform.DOScale(1, 0).SetDelay(0.015625f * index).OnStart(() => { HexTiles.Remove(thirdTopTile); }).OnComplete(() => {
-            disappearingTiles.Remove(thirdTopTile); Destroy(thirdTopTile.gameObject); }); index++;
+        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(thirdTopTile); });
         if (extraSameTiles.Count > 0)
         {
-            Debug.Log(extraSameTiles.Count);
             foreach (HexTiles tiles in extraSameTiles)
             {
                 foreach (GameObject t in tiles.singleTile)
                 {
-                    t.transform.DOScale(0, 0.03125f).SetDelay(0.015625f * index); lastPosY = t.transform.position.y;
+                    t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+                    {
+                        AudioManager.Instance.PlaySFX("Pickup");
+                    }).OnComplete(() =>
+                    {
+                        t.transform.localScale = Vector3.zero;
+                    }); lastPosY = t.transform.position.y;
                     index++;
                 }
                 disappearingTiles.Add(tiles);
-                transform.DOScale(1, 0).SetDelay(0.015625f * index).OnStart(() => { HexTiles.Remove(tiles); }).OnComplete(() => { 
-                    disappearingTiles.Remove(tiles); Destroy(tiles.gameObject); }); index++;
+                transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(tiles); });
 
             }
             extraSameTiles.Clear();
         }
-        transform.DOScale(1, 0).SetDelay(0.015625f * index).OnComplete(() =>
+        transform.DOScale(1, 0).SetDelay(TransferDelay * index).OnComplete(() =>
         {
-            StartCoroutine(FinishRemove(lastPosY));
+            Destroy(topTile.gameObject);
+            Destroy(secondTopTile.gameObject);
+            Destroy(thirdTopTile.gameObject);
+            foreach (HexTiles tiles in extraSameTiles)
+            {
+                Destroy(tiles.gameObject);
+            }
+            //StartCoroutine(DelayFinish(lastPosY));
+            disappearingTiles.Clear();
+            CheckIfEmpty();
+
+            AudioManager.Instance.PlaySFX("FullStack");
+            isEmptying = false;
+            CheckHexTiles();
+            GameManager.Instance.UpdateAllMixer("RS");
+            Debug.Log("huh");
+            GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
+            GetComponentInParent<HexBase>().sparkleVFX.Play();
+            GameManager.Instance.CheckSimilarTopTiles();
         });
+    }
+
+    public IEnumerator DelayFinish(float lastPosY)
+    {
+        yield return new WaitForEndOfFrame();
+
+        disappearingTiles.Clear();
+        CheckIfEmpty();
+        StartCoroutine(FinishRemove(lastPosY));
     }
 
     public IEnumerator FinishRemove(float lastPosY)
     {
         yield return new WaitUntil(() => disappearingTiles.Count == 0);
 
+        AudioManager.Instance.PlaySFX("FullStack");
         isEmptying = false;
         CheckHexTiles();
-        GameManager.Instance.CheckSimilarTopTiles();
         GameManager.Instance.UpdateAllMixer("RS");
-        Debug.Log(lastPosY);
+        Debug.Log("huh");
         GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
         GetComponentInParent<HexBase>().sparkleVFX.Play();
+        GameManager.Instance.CheckSimilarTopTiles();
 
     }
 
@@ -365,7 +417,6 @@ public class HexGroup : MonoBehaviour
         {
             if (HexTiles.Count == 0)
             {
-                Debug.Log("Huh");
                 if (Replacer)
                 {
                     //Do breaking base animation
@@ -378,7 +429,7 @@ public class HexGroup : MonoBehaviour
                     transform.parent.GetComponentInParent<HexBase>().occupiedHex = null;
                     Destroy(this.gameObject);
                 }
-                StartCoroutine(StackCheck());
+                if (oneStack) { StackCheck(); }
             }
         }
         //if (HexTiles.Count > 2) Debug.Log(name + ": " + HexTiles.Count + " - " + transform.childCount);
@@ -397,15 +448,15 @@ public class HexGroup : MonoBehaviour
     }
     #endregion
 
-    public IEnumerator StackCheck()
+    public void StackCheck()
     {
-        yield return new WaitForEndOfFrame();
-        CheckHexTiles();
-        GameManager.Instance.UpdateAllMixer("SC");
+        //yield return new WaitForEndOfFrame();
+        Debug.Log("what");
         if (oneStack)
         {
             Debug.Log("Check Again");
             oneStack = false;
+            GameManager.Instance.firstFullStack = false;
             GameManager.Instance.CheckSimilarTopTiles(); //Check Again for confirmation
         }
     }
