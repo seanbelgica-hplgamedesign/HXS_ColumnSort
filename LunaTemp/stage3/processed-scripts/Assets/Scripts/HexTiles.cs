@@ -78,8 +78,7 @@ public class HexTiles : MonoBehaviour
             if (second)
             {
                 oldParent.CheckHexTiles();
-                GameManager.Instance.IsTransferring = false; //Debug.Log(GameManager.Instance.currentMixers.Count);
-                //foreach (HexGroup group in GameManager.Instance.currentMixers) Debug.Log(group.name);
+                GameManager.Instance.IsTransferring = false;
                 GameManager.Instance.UpdateAllMixer("Transfer");
                 StartCoroutine(GameManager.Instance.DelayTransferring());
             }
@@ -88,8 +87,7 @@ public class HexTiles : MonoBehaviour
                 if (!oldParent.hasSecond)
                 {
                     oldParent.CheckHexTiles();
-                    GameManager.Instance.IsTransferring = false; //Debug.Log(GameManager.Instance.currentMixers.Count);
-                    //foreach (HexGroup group in GameManager.Instance.currentMixers) Debug.Log(group.name);
+                    GameManager.Instance.IsTransferring = false;
                     GameManager.Instance.UpdateAllMixer("Transfer");
                     StartCoroutine(GameManager.Instance.DelayTransferring());
                 }

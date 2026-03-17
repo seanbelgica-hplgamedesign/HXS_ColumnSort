@@ -64,7 +64,6 @@ public class HexGroup : MonoBehaviour
                 if (t.GetComponent<HexTiles>()) { HexTiles.Add(t.GetComponent<HexTiles>()); }
             }
         }
-
         topTile = null;
         secondTopTile = null;
         thirdTopTile = null;
@@ -231,11 +230,11 @@ public class HexGroup : MonoBehaviour
                             {
                                 dragger.isTweening = false;
                                 dragger.GroupType = GroupType.Mixer;
+                                GameManager.Instance.UpdateAllMixer("Dropped");
                                 GameManager.Instance.currentMixers.Add(this);
 
                                 hit.collider.GetComponentInParent<HexBase>().occupied = true;
                                 transform.parent.GetComponentInParent<HexBase>().occupiedHex = dragger;
-                                GameManager.Instance.UpdateAllMixer("Dropped");
                                 GameManager.Instance.CheckSimilarTopTiles();
                             });
                             dragger.transform.SetParent(hit.collider.transform);
@@ -363,52 +362,51 @@ public class HexGroup : MonoBehaviour
             }
             extraSameTiles.Clear();
         }
-        transform.DOScale(1, 0).SetDelay(TransferDelay * index).OnComplete(() =>
-        {
-            Destroy(topTile.gameObject);
-            Destroy(secondTopTile.gameObject);
-            Destroy(thirdTopTile.gameObject);
-            foreach (HexTiles tiles in extraSameTiles)
-            {
-                Destroy(tiles.gameObject);
-            }
-            //StartCoroutine(DelayFinish(lastPosY));
-            disappearingTiles.Clear();
-            CheckIfEmpty();
-
-            AudioManager.Instance.PlaySFX("FullStack");
-            isEmptying = false;
-            CheckHexTiles();
-            GameManager.Instance.UpdateAllMixer("RS");
-            Debug.Log("huh");
-            GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
-            GetComponentInParent<HexBase>().sparkleVFX.Play();
-            GameManager.Instance.CheckSimilarTopTiles();
-        });
+        StartCoroutine(FinishMerge(TransferDelay * index, lastPosY));
+        //transform.DOScale(1, 0).SetDelay(TransferDelay * index).OnComplete(() =>
+        //{
+        //    DestroyImmediate(topTile.gameObject);
+        //    DestroyImmediate(secondTopTile.gameObject);
+        //    DestroyImmediate(thirdTopTile.gameObject);
+        //    foreach (HexTiles tiles in extraSameTiles)
+        //    {
+        //        Destroy(tiles.gameObject);
+        //    }
+        //    //StartCoroutine(DelayFinish(lastPosY));
+        //    disappearingTiles.Clear();
+        //    CheckIfEmpty();
+        //    CheckHexTiles();
+        //
+        //    AudioManager.Instance.PlaySFX("FullStack");
+        //    isEmptying = false;
+        //    GameManager.Instance.UpdateAllMixer("RS");
+        //    GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
+        //    GetComponentInParent<HexBase>().sparkleVFX.Play();
+        //    GameManager.Instance.CheckSimilarTopTiles();
+        //});
     }
 
-    public IEnumerator DelayFinish(float lastPosY)
+    public IEnumerator FinishMerge(float delay, float lastPosY)
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(delay);
 
+        DestroyImmediate(topTile.gameObject);
+        DestroyImmediate(secondTopTile.gameObject);
+        DestroyImmediate(thirdTopTile.gameObject);
+        foreach (HexTiles tiles in extraSameTiles)
+        {
+            Destroy(tiles.gameObject);
+        }
         disappearingTiles.Clear();
         CheckIfEmpty();
-        StartCoroutine(FinishRemove(lastPosY));
-    }
-
-    public IEnumerator FinishRemove(float lastPosY)
-    {
-        yield return new WaitUntil(() => disappearingTiles.Count == 0);
+        CheckHexTiles();
 
         AudioManager.Instance.PlaySFX("FullStack");
         isEmptying = false;
-        CheckHexTiles();
         GameManager.Instance.UpdateAllMixer("RS");
-        Debug.Log("huh");
         GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
         GetComponentInParent<HexBase>().sparkleVFX.Play();
         GameManager.Instance.CheckSimilarTopTiles();
-
     }
 
     public void CheckIfEmpty()

@@ -121,12 +121,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //public IEnumerator DelayChecking()
-    //{
-    //    yield return new WaitForEndOfFrame();
-    //    CheckSimilarTopTiles();
-    //}
-
     public IEnumerator DelayTransferring()
     {
         yield return new WaitUntil(() => !IsTransferring);
@@ -175,12 +169,14 @@ public class GameManager : MonoBehaviour
         }
         UpdateAllMixer("CSMT3");
 
+        if (firstFullStack) return;
         Debug.Log("No more similar top tiles");
         StartCoroutine(CheckAllOccupied());
     }
 
     public void UpdateAllMixer(string name)
     {
+        HexGroup hex = currentMixers[currentMixers.Count - 1];
         currentMixers.Clear();
         foreach (HexBase bases in hexBases)
         {
@@ -196,6 +192,8 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        currentMixers.Remove(hex);
+        currentMixers.Add(hex);
 
         foreach (HexGroup group in currentMixers)
         {
