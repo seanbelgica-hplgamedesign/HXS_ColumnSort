@@ -93,7 +93,6 @@ public class GameManager : MonoBehaviour
             currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
             currentReplacer.CheckHexTiles();
             //UpdateAllMixer("RNT");
-            Debug.Log(currentReplacer.HexTiles.Count);
             CheckSimilarTopTiles();
         }
         else
@@ -124,6 +123,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckSimilarTopTiles()
     {
+        if (firstFullStack) { foreach (HexGroup mixer in currentMixers) { mixer.CheckFullStack(); } }
         UpdateAllMixer("CSMT1");
 
         foreach (HexGroup giver in currentMixers)
@@ -148,17 +148,13 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        foreach (HexGroup mixer in currentMixers)
-        {
-            if (!mixer.isEmptying)
-            {
-                mixer.CheckFullStack();
-            }
-        }
+        //Debug.Log("No more similar top tiles");
+        bool noStack = CheckFullStacks();
+        if (noStack) return;
         UpdateAllMixer("CSMT3");
 
         if (firstFullStack) return;
-        Debug.Log("No more similar top tiles");
+        Debug.Log("No more merging needed");
         StartCoroutine(CheckAllOccupied());
     }
 
@@ -188,7 +184,6 @@ public class GameManager : MonoBehaviour
         foreach (HexGroup group in currentMixers)
         {
             group.CheckHexTiles();
-            group.CheckIfEmpty();
         }
         foreach (HexGroup group in currentMixers)
         {
@@ -197,9 +192,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool CheckFullStacks()
+    {
+        foreach (HexGroup mixer in currentMixers) { if (mixer.isEmptying) return true; if (mixer.isTransferring) return true; }
+
+        foreach (HexGroup mixer in currentMixers)
+        {
+            if (!mixer.isEmptying) mixer.CheckFullStack();
+        }
+        return false;
+    }
+
     public IEnumerator CheckAllOccupied()
     {
         yield return new WaitForSeconds(0.0625f);
+        foreach (HexGroup mixer in currentMixers) { if (mixer.isEmptying) yield break; if (mixer.isTransferring) yield break; }
 
         bool allOccupied = true;
         foreach (HexBase h in hexBases)
@@ -212,5 +219,27 @@ public class GameManager : MonoBehaviour
             Debug.Log("All Bases have been Occupied");
             CTAManager.Instance.ShowLoseCard();
         }
+    }
+
+    public void FinishEmptying(float lastPosY, HexGroup emptyHex, bool fullyEmpty)
+    {
+        Debug.Log("Check Again");
+        if (fullyEmpty) emptyHex.CheckIfEmpty();
+        UpdateAllMixer("CheckAgain");
+        firstFullStack = false;
+
+        //GameManager.Instance.UpdateAllMixer("RS");
+        //if (oneStack) { CheckIfEmpty(); GameManager.Instance.CheckAgain(); }
+        CheckSimilarTopTiles();
+    }
+
+    public void CheckAgain()
+    {
+        Debug.Log("Check Again");
+        UpdateAllMixer("CheckAgain");
+        firstFullStack = false;
+        
+        //Check Again for confirmation
+        CheckSimilarTopTiles();
     }
 }

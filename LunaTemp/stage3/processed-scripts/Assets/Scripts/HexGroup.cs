@@ -135,14 +135,13 @@ public class HexGroup : MonoBehaviour
     {
         if (CTAManager.Instance.GameOver) return;
         if (CameraInfo.Instance.IntroCamera) return;
-        //if (GameManager.Instance.IsTransferring) return;
         if (GroupType != GroupType.Dragger) return;
         if (!draggable) { return; }
         if (isTweening) return;
         if (isDragging) return;
-        //foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) return;
+        //bool allOccupied = true; foreach (HexBase bases in GameManager.Instance.hexBases) { if (!bases.occupied) { allOccupied = false; break; } } if (allOccupied) return; 
 
-                GameManager.Instance.currentHexDrag = this;
+        GameManager.Instance.currentHexDrag = this;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -215,8 +214,6 @@ public class HexGroup : MonoBehaviour
             HexGroup dragger = GameManager.Instance.currentHexDrag;
             if (dragger.GroupType == GroupType.Dragger)
             {
-                StopCoroutine(GameManager.Instance.CheckAllOccupied());
-
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit[] hits = Physics.RaycastAll(ray);
 
@@ -292,6 +289,7 @@ public class HexGroup : MonoBehaviour
         {
             if (!GameManager.Instance.firstFullStack)
             {
+                Debug.Log(name);
                 GameManager.Instance.firstFullStack = true;
                 oneStack = true;
             }
@@ -302,105 +300,165 @@ public class HexGroup : MonoBehaviour
 
     public IEnumerator RemoveStacks()
     {
+        if (isEmptying) yield break;
         isEmptying = true;
         yield return new WaitForSeconds(0.125f);
 
         CheckHexTiles();
+        bool fullyEmpty = false;
+        if (stackNum == HexTiles.Count) { fullyEmpty = true; Debug.Log(transform.parent.name + " fullyEmpty"); }
         int index = 0;
         float lastPosY = 0;
         disappearingTiles.Add(topTile);
         disappearingTiles.Add(secondTopTile);
         disappearingTiles.Add(thirdTopTile);
+        Sequence seq = DOTween.Sequence();
+
         //First Top Tile
         foreach (GameObject t in topTile.singleTile)
         {
-            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
-            {
-                AudioManager.Instance.PlaySFX("Pickup");
-            }).OnComplete(() =>
-            {
-                t.transform.localScale = Vector3.zero;
-            });
-            index++;
+            seq.Insert(TransferDelay * index, t.transform.DOScale(0.1f, TransferTime).OnStart(() => { AudioManager.Instance.PlaySFX("Pickup"); })
+                .OnComplete(() => { t.transform.localScale = Vector3.zero; })); index++;
         }
-        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(topTile); })
-            .OnComplete(() => { disappearingTiles.Remove(topTile); });
+        seq.Insert(TransferDelay * index + TransferTime, topTile.transform.DOScale(0, 0).OnStart(() => { HexTiles.Remove(topTile); })
+            .OnComplete(() => { disappearingTiles.Remove(topTile); }));
+
         //Second Top Tile
         foreach (GameObject t in secondTopTile.singleTile)
         {
-            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
-            {
-                AudioManager.Instance.PlaySFX("Pickup");
-            }).OnComplete(() =>
-            {
-                t.transform.localScale = Vector3.zero;
-            });
-            index++;
+            seq.Insert(TransferDelay * index, t.transform.DOScale(0.1f, TransferTime).OnStart(() => { AudioManager.Instance.PlaySFX("Pickup"); })
+                .OnComplete(() => { t.transform.localScale = Vector3.zero; })); index++;
         }
-        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(secondTopTile); })
-            .OnComplete(() => { disappearingTiles.Remove(secondTopTile); });
+        seq.Insert(TransferDelay * index + TransferTime, secondTopTile.transform.DOScale(0, 0).OnStart(() => { HexTiles.Remove(secondTopTile); })
+            .OnComplete(() => { disappearingTiles.Remove(secondTopTile); }));
+
         //Third Top Tile
         foreach (GameObject t in thirdTopTile.singleTile)
         {
-            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
-            {
-                AudioManager.Instance.PlaySFX("Pickup");
-            }).OnComplete(() =>
-            {
-                t.transform.localScale = Vector3.zero;
-            }); lastPosY = t.transform.position.y;
-            index++;
+            seq.Insert(TransferDelay * index, t.transform.DOScale(0.1f, TransferTime).OnStart(() => { AudioManager.Instance.PlaySFX("Pickup"); })
+                .OnComplete(() => { t.transform.localScale = Vector3.zero; })); index++; lastPosY = t.transform.position.y;
         }
-        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(thirdTopTile); })
-            .OnComplete(() => { disappearingTiles.Remove(thirdTopTile); });
+        seq.Insert(TransferDelay * index + TransferTime, thirdTopTile.transform.DOScale(0, 0).OnStart(() => { HexTiles.Remove(thirdTopTile); })
+            .OnComplete(() => { disappearingTiles.Remove(thirdTopTile); }));
+
         //Extra Tiles
         if (extraSameTiles.Count > 0)
         {
             foreach (HexTiles tiles in extraSameTiles)
             {
+                disappearingTiles.Add(tiles);
                 foreach (GameObject t in tiles.singleTile)
                 {
-                    t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
-                    {
-                        AudioManager.Instance.PlaySFX("Pickup");
-                    }).OnComplete(() =>
-                    {
-                        t.transform.localScale = Vector3.zero;
-                    }); lastPosY = t.transform.position.y;
-                    index++;
+                    seq.Insert(TransferDelay * index, t.transform.DOScale(0.1f, TransferTime).OnStart(() => { AudioManager.Instance.PlaySFX("Pickup"); })
+                .OnComplete(() => { t.transform.localScale = Vector3.zero; })); index++; lastPosY = t.transform.position.y;
                 }
-                disappearingTiles.Add(tiles);
-                transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(tiles); })
-                    .OnComplete(() => { disappearingTiles.Remove(tiles); });
-
+                seq.Insert(TransferDelay * index + TransferTime, tiles.transform.DOScale(0, 0).OnStart(() => { HexTiles.Remove(tiles); })
+                            .OnComplete(() => { disappearingTiles.Remove(tiles); }));
             }
             extraSameTiles.Clear();
         }
-        StartCoroutine(FinishMerge(TransferDelay * index, lastPosY));
+
+        seq.OnComplete(() =>
+        {
+            FinishMerge(lastPosY, fullyEmpty);
+        });
+
+        seq.Play();
+
+        #region Manual Tile Breaks
+        ////First Top Tile
+        //foreach (GameObject t in topTile.singleTile)
+        //{
+        //    t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+        //    {
+        //        AudioManager.Instance.PlaySFX("Pickup");
+        //    }).OnComplete(() =>
+        //    {
+        //        t.transform.localScale = Vector3.zero;
+        //    });
+        //    index++;
+        //}
+        //transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(topTile); })
+        //    .OnComplete(() => { disappearingTiles.Remove(topTile); });
+        ////Second Top Tile
+        //foreach (GameObject t in secondTopTile.singleTile)
+        //{
+        //    t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+        //    {
+        //        AudioManager.Instance.PlaySFX("Pickup");
+        //    }).OnComplete(() =>
+        //    {
+        //        t.transform.localScale = Vector3.zero;
+        //    });
+        //    index++;
+        //}
+        //transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(secondTopTile); })
+        //    .OnComplete(() => { disappearingTiles.Remove(secondTopTile); });
+        ////Third Top Tile
+        //foreach (GameObject t in thirdTopTile.singleTile)
+        //{
+        //    t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+        //    {
+        //        AudioManager.Instance.PlaySFX("Pickup");
+        //    }).OnComplete(() =>
+        //    {
+        //        t.transform.localScale = Vector3.zero;
+        //    }); lastPosY = t.transform.position.y;
+        //    index++;
+        //}
+        //transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(thirdTopTile); })
+        //    .OnComplete(() => { disappearingTiles.Remove(thirdTopTile); });
+        ////Extra Tiles
+        //if (extraSameTiles.Count > 0)
+        //{
+        //    foreach (HexTiles tiles in extraSameTiles)
+        //    {
+        //        foreach (GameObject t in tiles.singleTile)
+        //        {
+        //            t.transform.DOScale(0.1f, TransferTime).SetDelay(TransferDelay * index).OnStart(() =>
+        //            {
+        //                AudioManager.Instance.PlaySFX("Pickup");
+        //            }).OnComplete(() =>
+        //            {
+        //                t.transform.localScale = Vector3.zero;
+        //            }); lastPosY = t.transform.position.y;
+        //            index++;
+        //        }
+        //        disappearingTiles.Add(tiles);
+        //        transform.DOScale(1, TransferTime).SetDelay(TransferDelay * index).OnStart(() => { HexTiles.Remove(tiles); })
+        //            .OnComplete(() => { disappearingTiles.Remove(tiles); });
+        //
+        //    }
+        //    extraSameTiles.Clear();
+        //}
+        //StartCoroutine(FinishMerge(TransferDelay * index, lastPosY));
+        #endregion
     }
 
-    public IEnumerator FinishMerge(float delay, float lastPosY)
+    public void FinishMerge(float lastPosY, bool fullyEmpty)
     {
         //yield return new WaitForSeconds(delay);
-        yield return new WaitUntil(() => disappearingTiles.Count == 0);
+        //yield return new WaitUntil(() => disappearingTiles.Count == 0);
 
-        DestroyImmediate(topTile.gameObject);
-        DestroyImmediate(secondTopTile.gameObject);
-        DestroyImmediate(thirdTopTile.gameObject);
+        Debug.Log("a");
+        if (topTile) DestroyImmediate(topTile.gameObject);
+        if (secondTopTile) DestroyImmediate(secondTopTile.gameObject);
+        if (thirdTopTile) DestroyImmediate(thirdTopTile.gameObject);
+        Debug.Log("b");
         foreach (HexTiles tiles in extraSameTiles)
         {
             Destroy(tiles.gameObject);
         }
         disappearingTiles.Clear();
-        CheckIfEmpty();
-        CheckHexTiles();
-
-        AudioManager.Instance.PlaySFX("FullStack");
-        isEmptying = false;
-        //GameManager.Instance.UpdateAllMixer("RS");
         GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));
         GetComponentInParent<HexBase>().sparkleVFX.Play();
-        GameManager.Instance.CheckSimilarTopTiles();
+        AudioManager.Instance.PlaySFX("FullStack");
+
+        isEmptying = false;
+        HexGroup emptyHex = this;
+        if (fullyEmpty) { HexTiles.Clear(); }
+
+        GameManager.Instance.FinishEmptying(lastPosY, emptyHex, fullyEmpty);
     }
 
     public void CheckIfEmpty()
@@ -419,9 +477,8 @@ public class HexGroup : MonoBehaviour
                     GameManager.Instance.currentMixers.Remove(this);
                     transform.parent.GetComponentInParent<HexBase>().occupied = false;
                     transform.parent.GetComponentInParent<HexBase>().occupiedHex = null;
-                    Destroy(this.gameObject);
+                    DestroyImmediate(this.gameObject);
                 }
-                if (oneStack) { StackCheck(); }
             }
         }
         //if (HexTiles.Count > 2) Debug.Log(name + ": " + HexTiles.Count + " - " + transform.childCount);
@@ -439,16 +496,4 @@ public class HexGroup : MonoBehaviour
         }
     }
     #endregion
-
-    public void StackCheck()
-    {
-        //yield return new WaitForEndOfFrame();
-        if (oneStack)
-        {
-            Debug.Log("Check Again");
-            oneStack = false;
-            GameManager.Instance.firstFullStack = false;
-            GameManager.Instance.CheckSimilarTopTiles(); //Check Again for confirmation
-        }
-    }
 }

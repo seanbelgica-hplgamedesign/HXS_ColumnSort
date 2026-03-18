@@ -35,6 +35,11 @@ public class HexTiles : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (transform.localScale == Vector3.zero) { DestroyImmediate(gameObject); return; }
+    }
+
     public int TransferTiles(Transform target, int index, bool second)
     {
         float prevTileY = 1.25f;

@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckSimilarTopTiles()
     {
+        if (firstFullStack) { foreach (HexGroup mixer in currentMixers) { mixer.CheckFullStack(); } }
         UpdateAllMixer("CSMT1");
 
         foreach (HexGroup giver in currentMixers)
@@ -147,7 +148,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("No more similar top tiles");
+        //Debug.Log("No more similar top tiles");
         bool noStack = CheckFullStacks();
         if (noStack) return;
         UpdateAllMixer("CSMT3");
@@ -183,7 +184,6 @@ public class GameManager : MonoBehaviour
         foreach (HexGroup group in currentMixers)
         {
             group.CheckHexTiles();
-            group.CheckIfEmpty();
         }
         foreach (HexGroup group in currentMixers)
         {
@@ -219,5 +219,27 @@ public class GameManager : MonoBehaviour
             Debug.Log("All Bases have been Occupied");
             CTAManager.Instance.ShowLoseCard();
         }
+    }
+
+    public void FinishEmptying(float lastPosY, HexGroup emptyHex, bool fullyEmpty)
+    {
+        Debug.Log("Check Again");
+        if (fullyEmpty) emptyHex.CheckIfEmpty();
+        UpdateAllMixer("CheckAgain");
+        firstFullStack = false;
+
+        //GameManager.Instance.UpdateAllMixer("RS");
+        //if (oneStack) { CheckIfEmpty(); GameManager.Instance.CheckAgain(); }
+        CheckSimilarTopTiles();
+    }
+
+    public void CheckAgain()
+    {
+        Debug.Log("Check Again");
+        UpdateAllMixer("CheckAgain");
+        firstFullStack = false;
+        
+        //Check Again for confirmation
+        CheckSimilarTopTiles();
     }
 }

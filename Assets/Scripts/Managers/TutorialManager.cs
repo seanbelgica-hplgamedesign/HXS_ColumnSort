@@ -46,7 +46,7 @@ public class TutorialManager : MonoBehaviour
     private void Update()
     {
         //if (GameManager.Instance.IsTransferring) { currentTimer = 3; return; }
-        //foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) { currentTimer = 3; return; }
+        foreach (HexGroup h in GameManager.Instance.currentMixers) { if (h.isEmptying) { currentTimer = 3; return; } if (h.isTransferring) { currentTimer = 3; return; } }
 
         if (!IntroAnim && !CTAManager.Instance.GameOver)
         {
