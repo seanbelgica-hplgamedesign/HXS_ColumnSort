@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     public List<HexGroup> currentMixers;
     public HexGroup currentReplacer;
     public List<HexGroup> nearbyReplacerHexes;
-    public bool IsTransferring;
     public bool firstFullStack;
 
     [Header ("Dragger Info")]
@@ -89,11 +88,12 @@ public class GameManager : MonoBehaviour
             {
                 t.DOMoveZ(t.transform.position.z - 1.5f, 0.125f);
             }
-            currentReplacer.GetComponent<HexGroup>().GroupType = GroupType.Mixer;
+            currentReplacer.GroupType = GroupType.Mixer;
             currentReplacer.transform.SetParent(hexNorth);
             currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
+            currentReplacer.CheckHexTiles();
+            //UpdateAllMixer("RNT");
             CheckSimilarTopTiles();
-            UpdateAllMixer("RNT");
         }
         else
         {
@@ -121,26 +121,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public IEnumerator DelayTransferring()
-    {
-        yield return new WaitUntil(() => !IsTransferring);
-
-        CheckSimilarTopTiles();
-    }
-
     public void CheckSimilarTopTiles()
     {
-        if (IsTransferring) return;
-        foreach (HexGroup mixer in currentMixers)
-        {
-            mixer.UpdateNearbyTiles();
-        }
-
-        foreach (HexGroup mixer in currentMixers)
-        {
-            if (mixer.isEmptying) { Debug.Log("Something is emptying"); return; }
-        }
-
         UpdateAllMixer("CSMT1");
 
         foreach (HexGroup giver in currentMixers)
@@ -149,33 +131,36 @@ public class GameManager : MonoBehaviour
             {
                 receiver.CheckHexTiles();
                 giver.CheckHexTiles();
-                if (receiver != giver)
+                if (!receiver.isTransferring && !giver.isTransferring)
                 {
-                    if (receiver.topTile.tileColor == giver.topTile.tileColor)
+                    if (!receiver.isEmptying)
                     {
-                        //if (receiver.oneColor)
-                        //{
-                            IsTransferring = true;
-                            giver.TransferTiles(receiver);
-                            return;
-                        //}
+                        if (receiver != giver)
+                        {
+                            if (receiver.topTile.tileColor == giver.topTile.tileColor && giver.stackNum < 3)
+                            {
+                                giver.TransferTiles(receiver);
+                                return;
+                            }
+                        }
                     }
                 }
             }
         }
-        foreach (HexGroup mixer in currentMixers)
-        {
-            mixer.CheckFullStack();
-        }
+        Debug.Log("No more similar top tiles");
+        bool noStack = CheckFullStacks();
+        if (noStack) return;
         UpdateAllMixer("CSMT3");
 
         if (firstFullStack) return;
-        Debug.Log("No more similar top tiles");
+        Debug.Log("No more merging needed");
         StartCoroutine(CheckAllOccupied());
     }
 
     public void UpdateAllMixer(string name)
     {
+        //foreach (HexBase b in hexBases) { b.UpdateOccupied(); }
+
         HexGroup hex = currentMixers[currentMixers.Count - 1];
         currentMixers.Clear();
         foreach (HexBase bases in hexBases)
@@ -203,12 +188,25 @@ public class GameManager : MonoBehaviour
         foreach (HexGroup group in currentMixers)
         {
             group.UpdateNearbyTiles();
+            //if (name == "CSMT1") { Debug.Log(group.HexTiles.Count); }
         }
+    }
+
+    public bool CheckFullStacks()
+    {
+        foreach (HexGroup mixer in currentMixers) { if (mixer.isEmptying) return true; if (mixer.isTransferring) return true; }
+
+        foreach (HexGroup mixer in currentMixers)
+        {
+            if (!mixer.isEmptying) mixer.CheckFullStack();
+        }
+        return false;
     }
 
     public IEnumerator CheckAllOccupied()
     {
         yield return new WaitForSeconds(0.0625f);
+        foreach (HexGroup mixer in currentMixers) { if (mixer.isEmptying) yield break; if (mixer.isTransferring) yield break; }
 
         bool allOccupied = true;
         foreach (HexBase h in hexBases)

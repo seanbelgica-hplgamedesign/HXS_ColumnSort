@@ -399,7 +399,7 @@ MonoBehaviour:
     - UNITY_UI_ALPHACLIP
   _includedShaderVariants: []
   _excludedShaderVariants: []
-  version: 727
+  version: 780
   _shaderParsedShaders:
   - ParsedSubShaders:
     - Index: 0
@@ -18456,7 +18456,7 @@ MonoBehaviour:
   _sceneLightData:
     PointLightCount: 0
     SpotLightCount: 0
-    DirectionalLightCount: 14
+    DirectionalLightCount: 16
     LightmapOn: 1
     DirlightmapCombined: 1
     DirectionalCookieExists: 0

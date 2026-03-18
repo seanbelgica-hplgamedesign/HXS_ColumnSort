@@ -78,18 +78,20 @@ public class HexTiles : MonoBehaviour
             if (second)
             {
                 oldParent.CheckHexTiles();
-                GameManager.Instance.IsTransferring = false;
-                GameManager.Instance.UpdateAllMixer("Transfer");
-                StartCoroutine(GameManager.Instance.DelayTransferring());
+                transform.parent.GetComponent<HexGroup>().isTransferring = false;
+                oldParent.isTransferring = false;
+                //GameManager.Instance.UpdateAllMixer("Transfer");
+                GameManager.Instance.CheckSimilarTopTiles();
             }
             else
             {
                 if (!oldParent.hasSecond)
                 {
                     oldParent.CheckHexTiles();
-                    GameManager.Instance.IsTransferring = false;
-                    GameManager.Instance.UpdateAllMixer("Transfer");
-                    StartCoroutine(GameManager.Instance.DelayTransferring());
+                    transform.parent.GetComponent<HexGroup>().isTransferring = false;
+                    oldParent.isTransferring = false;
+                    //GameManager.Instance.UpdateAllMixer("Transfer");
+                    GameManager.Instance.CheckSimilarTopTiles();
                 }
             }
         });

@@ -23,4 +23,21 @@ public class HexBase : MonoBehaviour
             transform.GetChild(0).GetComponent<MeshRenderer>().material = originalColor;
         }
     }
+
+    public void UpdateOccupied()
+    {
+        Debug.Log(transform.childCount);
+        //if (transform.childCount == 3)
+        //{
+        //    occupied = true;
+        //    occupiedHex = transform.GetChild(2).GetComponent<HexGroup>();
+        //    if (occupiedHex.Replacer) Debug.Log("huh");
+        //}
+        //else
+        //{
+        //    occupied = false;
+        //    occupiedHex = null;
+        //    if (occupiedHex.Replacer) Debug.Log("huh2");
+        //}
+    }
 }

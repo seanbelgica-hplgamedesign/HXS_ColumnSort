@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class CameraInfo : MonoBehaviour
 {
-    [SerializeField] Transform PathParent;
     [SerializeField] List<Transform> TargetPaths;
     Vector3[] TargetPositions;
     Quaternion[] TargetRotations;
@@ -34,7 +33,6 @@ public class CameraInfo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //IntroCamera = true;
         StartCoroutine(StartRolling());
     }
 
@@ -42,12 +40,12 @@ public class CameraInfo : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        foreach (Transform t in PathParent)
+        foreach (Transform t in transform)
         {
             TargetPaths.Add(t);
         }
-        transform.position = TargetPaths[0].position;
-        transform.eulerAngles = TargetPaths[0].eulerAngles;
+        Camera.main.transform.position = TargetPaths[0].position;
+        Camera.main.transform.eulerAngles = TargetPaths[0].eulerAngles;
 
         TargetPositions = new Vector3[TargetPaths.Count];
         TargetRotations = new Quaternion[TargetPaths.Count];
@@ -58,7 +56,7 @@ public class CameraInfo : MonoBehaviour
         }
 
         pathDurations = GetWaypointDurations(TargetPositions, introTime);
-        transform.DOPath(TargetPositions, introTime, PathType.Linear, PathMode.Full3D, 10, null).OnWaypointChange(ChangeRotation).OnComplete(() =>
+        Camera.main.transform.DOPath(TargetPositions, introTime, PathType.Linear, PathMode.Full3D, 10, null).OnWaypointChange(ChangeRotation).OnComplete(() =>
         {
             IntroCamera = false;
         });
@@ -67,7 +65,7 @@ public class CameraInfo : MonoBehaviour
     private void ChangeRotation(int index)
     {
         //transform.DORotate(TargetRotations[index], GetWaypointDuration(TargetPositions, index, pathTween.Duration()));
-        transform.DORotateQuaternion(TargetRotations[index + 1], pathDurations[index]);
+        Camera.main.transform.DORotateQuaternion(TargetRotations[index + 1], pathDurations[index]);
     }
 
     float[] GetWaypointDurations(Vector3[] waypoints, float totalDuration)

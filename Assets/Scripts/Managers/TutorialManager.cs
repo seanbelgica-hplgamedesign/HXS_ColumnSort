@@ -45,8 +45,8 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.IsTransferring) { currentTimer = 3; return; }
-        foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) { currentTimer = 3; return; }
+        //if (GameManager.Instance.IsTransferring) { currentTimer = 3; return; }
+        //foreach (HexGroup h in GameManager.Instance.currentMixers) if (h.isEmptying) { currentTimer = 3; return; }
 
         if (!IntroAnim && !CTAManager.Instance.GameOver)
         {
@@ -137,7 +137,7 @@ public class TutorialManager : MonoBehaviour
             {
                 if (GameManager.Instance.currentHexDrag)
                 {
-                    Debug.Log("Choosing held hand");
+                    //Debug.Log("Choosing held hand");
                     dragger = GameManager.Instance.currentHexDrag;
                     int x = 0; 
                     foreach (HexGroup hex in GameManager.Instance.hexDraggers)
@@ -163,7 +163,7 @@ public class TutorialManager : MonoBehaviour
                             {
                                 if (drag != GameManager.Instance.emptyDrag && drag.topTile.tileColor == b.occupiedHex.topTile.tileColor)
                                 {
-                                    Debug.Log("Choosing held hand");
+                                    //Debug.Log("Choosing held hand");
                                     oldStarter = starterPos;
                                     dragger = GameManager.Instance.hexDraggers[index];
                                     starterPos = dragPos[index].anchoredPosition;
@@ -176,11 +176,12 @@ public class TutorialManager : MonoBehaviour
                     }
                 }
 
-                Debug.Log("Choosing random hand");
+                //Debug.Log("Choosing random hand");
+                int tries = 10;
                 while (true)
                 {
                     int x = Random.Range(0, dragPos.Count);
-                    if (GameManager.Instance.hexDraggers[x].GroupType != GroupType.None)
+                    if (GameManager.Instance.hexDraggers[x].GroupType != GroupType.None || tries == 0)
                     {
                         oldStarter = starterPos;
                         dragger = GameManager.Instance.hexDraggers[x];
@@ -188,6 +189,7 @@ public class TutorialManager : MonoBehaviour
                         handTool.anchoredPosition = starterPos;
                         return;
                     }
+                    tries--;
                 }
             }
         }
@@ -228,14 +230,16 @@ public class TutorialManager : MonoBehaviour
             }
 
             //No possible nearby
+            int tries = 10;
             while (true)
             {
                 int x = Random.Range(0, basePos.Count);
-                if (!GameManager.Instance.hexBases[x].occupied)
+                if (!GameManager.Instance.hexBases[x].occupied || tries == 0)
                 {
                     target = basePos[x].anchoredPosition;
                     return target;
                 }
+                tries--;
             }
         }
     }
