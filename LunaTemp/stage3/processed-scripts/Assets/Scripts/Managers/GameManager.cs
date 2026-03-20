@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public HexGroup currentReplacer;
     public List<HexGroup> nearbyReplacerHexes;
     public bool firstFullStack;
+    public int topTileChances;
+    public int tileChances;
 
     [Header ("Dragger Info")]
     public HexGroup currentHexDrag;
@@ -68,7 +70,7 @@ public class GameManager : MonoBehaviour
         }
 
         //Debug Mode
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             ReplaceNewTiles();
         }
@@ -78,22 +80,48 @@ public class GameManager : MonoBehaviour
     {
         currentMixers.Remove(currentReplacer);
         HexGroup oldReplacer = currentReplacer;
+
+        foreach (Transform t in replacerParent)
+        {
+            t.DOMoveZ(t.transform.position.z - 1.5f, 0.125f);
+        }
+        DestroyImmediate(oldReplacer.gameObject);
+
         if (replacerParent.childCount > 0)
         {
             currentReplacer = replacerParent.GetChild(0).GetComponent<HexGroup>();
             UpdateRandomizerChances();
             currentMixers.Insert(0, currentReplacer);
-            Destroy(oldReplacer.gameObject);
-
-            foreach (Transform t in replacerParent)
-            {
-                t.DOMoveZ(t.transform.position.z - 1.5f, 0.125f);
-            }
             currentReplacer.GroupType = GroupType.Mixer;
             currentReplacer.transform.SetParent(hexNorth);
             currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
             currentReplacer.CheckHexTiles();
-            //UpdateAllMixer("RNT");
+
+            if (replacerParent.childCount < 13)
+            {
+                TutorialManager.Instance.UpdateHandPositioning(replacerParent.childCount);
+                TutorialManager.Instance.ResetTimer();
+
+                float camY, camZ;
+                switch (replacerParent.childCount)
+                {
+                    case 12: camY = 16.5f; camZ = -7.5f; break;
+                    case 11: camY = 17.5f; camZ = -7.75f; break;
+                    case 10: camY = 18.5f; camZ = -7.75f; break;
+                    case 9: camY = 19.5f; camZ = -7.75f; break;
+                    case 8: camY = 20.5f; camZ = -8f; break;
+                    case 7: camY = 22f; camZ = -8.25f; break;
+                    case 6: camY = 23f; camZ = -8.25f; break;
+                    case 5: camY = 24f; camZ = -8.5f; break;
+                    case 4: camY = 25f; camZ = -8.5f; break;
+                    case 3: camY = 26f; camZ = -8.5f; break;
+                    case 2: camY = 27.5f; camZ = -8.75f; break;
+                    case 1: camY = 28.5f; camZ = -9f; break;
+                    default: camY = 28.5f; camZ = -9.25f; break;
+                }
+                Camera.main.transform.DOMove(new Vector3(0, camY, camZ), 0.5f).SetEase(Ease.InOutBack);
+            }
+
             CheckSimilarTopTiles();
         }
         else
@@ -106,14 +134,13 @@ public class GameManager : MonoBehaviour
     public void UpdateRandomizerChances()
     {
         HexGroup replacer = currentReplacer;
-        int red = 1; int violet = 1; int blue = 1; int cyan = 1;
-        int green = 1; int yellow = 1; int orange = 1;
+        int red = 1; int violet = 1; int blue = 1; int green = 1; int yellow = 1;
 
         int extra = 0;
         if (replacer.isTransferring && replacer.HexTiles.Count == 1) replacer = replacerParent.GetChild(0).GetComponent<HexGroup>(); 
         //Happens when replaces is transferring and will go to next replacer
 
-        if (!replacer.isTransferring) { extra += (2 * (replacer.HexTiles.Count - 1)); }
+        if (!replacer.isTransferring) { extra += (topTileChances * (replacer.HexTiles.Count - 1)); }
         //Checks if reference is transferring
 
         foreach (HexTiles tiles in replacer.HexTiles)
@@ -122,34 +149,30 @@ public class GameManager : MonoBehaviour
             {
                 switch ((int)tiles.tileColor) //Prioritizing Top Tile
                 {
-                    case 1: red += extra; break;
-                    case 2: violet += extra; break;
-                    case 3: blue += extra; break;
-                    case 4: cyan += extra; break;
-                    case 5: green += extra; break;
-                    case 6: yellow += extra; break;
-                    case 7: orange += extra; break;
+                    case 1: violet += extra; break;
+                    case 2: yellow += extra; break;
+                    case 3: red += extra; break;
+                    case 4: green += extra; break;
+                    case 5: blue += extra; break;
                 }
             }
 
             switch ((int)tiles.tileColor)
             {
-                case 1: red += 2; break;
-                case 2: violet += 2; break;
-                case 3: blue += 2; break;
-                case 4: cyan += 2; break;
-                case 5: green += 2; break;
-                case 6: yellow += 2; break;
-                case 7: orange += 2; break;
+                case 1: violet += tileChances; break;
+                case 2: yellow += tileChances; break;
+                case 3: red += tileChances; break;
+                case 4: green += tileChances; break;
+                case 5: blue += tileChances; break;
             }
         }
-        violet += red; blue += violet; cyan += blue; green += cyan; yellow += green; orange += yellow;
-        Debug.Log((red - 1) + "|" + (violet - red - 1) + "|" + (blue - violet - 1) + "|" + (cyan - blue - 1) 
-            + "|" + (green - cyan - 1) + "|" + (yellow - green - 1) + "|" + (orange - yellow - 1));
+
+
+        yellow += violet; red += yellow; green += red; blue += green;
+        //Debug.Log((violet - 1) + "|" + (yellow - violet - 1) + "|" + (red - yellow - 1) + "|" + (green - red - 1) + "|" + (blue - green - 1));
 
         replacerChances.Clear();
-        replacerChances.Add(red); replacerChances.Add(violet); replacerChances.Add(blue); replacerChances.Add(cyan);
-        replacerChances.Add(green); replacerChances.Add(yellow); replacerChances.Add(orange);
+        replacerChances.Add(violet); replacerChances.Add(yellow); replacerChances.Add(red); replacerChances.Add(green); replacerChances.Add(blue); 
     }
 
     public void CheckDraggerCount()

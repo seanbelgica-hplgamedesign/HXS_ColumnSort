@@ -131,7 +131,7 @@ public class HexGroup : MonoBehaviour
         HexTiles[0].tileColor = (TileColor)index0;
         HexTiles[1].tileColor = (TileColor)index0;
 
-        if (Random.Range(0, 2) == 0) //1 in 2 chance to have different color
+        if (Random.Range(0, 4) == 0) //1 in 2 chance to have different color
         {
             // Index1 Color Picker
             index = 1;
@@ -141,7 +141,6 @@ public class HexGroup : MonoBehaviour
                 index++;
             }
 
-            Debug.Log("Changing lower color - " + index1);
             HexTiles[0].tileColor = (TileColor)index1;
         }
     }

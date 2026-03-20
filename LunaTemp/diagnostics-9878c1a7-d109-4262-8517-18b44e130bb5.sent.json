@@ -1,0 +1,229 @@
+{
+    "BuildID": "9878c1a7-d109-4262-8517-18b44e130bb5",
+    "Command": "project:deploy",
+    "ProjectID": "7580e4ad9861cca4a8f47dfd6bc78b4a",
+    "ProjectStateHash": "0f3d308e3e6054af3e9054a86202fc4a7f4f80c6ac9789f7b4fb054ce6502947",
+    "StageCompletedAt": 3,
+    "EarliestFatalError": 0,
+    "StartTime": 1774012177739,
+    "EndTime": 1774012262327,
+    "PlaygroundUserID": 32569,
+    "OperatingSystem": "win32",
+    "UnityPackageID": null,
+    "TargetPlatform": "playground",
+    "UnityVersion": "2022.3.3f1",
+    "LunaVersion": "6.3.0",
+    "LogCount": 8,
+    "Logs": [
+        {
+            "LogID": "eb4fc81a-c612-4993-a09f-719c83fb2952",
+            "Order": 7,
+            "Timestamp": 1774012262880,
+            "Stage": 3,
+            "ErrorType": 3,
+            "ErrorCode": "LP3007",
+            "Description": "You are not using any custom events",
+            "Details": [
+                "You are not using any custom events. It is recommended to use custom events to have a better understanding of the playable."
+            ],
+            "DescriptionValues": [
+                ""
+            ],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": null,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "0a96665b-8dd7-4fe4-ac60-8eaddfd0d09a",
+            "Order": 7,
+            "Timestamp": 1774012262881,
+            "Stage": 3,
+            "ErrorType": 3,
+            "ErrorCode": "LP3012",
+            "Description": "You are not using the minimum recommended amount of LunaPlaygroundFields attributes.",
+            "Details": [
+                "You are not using the minimum recommended amount of LunaPlaygroundFields attributes, you are using: 1 and we recommend using a minimum of: 3. It allows you to configure your playable to different concepts to find the best variation, which can drastically improve playable performance on all ad networks."
+            ],
+            "DescriptionValues": [
+                "1",
+                "3"
+            ],
+            "DetailsValues": [
+                "1",
+                "3"
+            ],
+            "LogCount": 1,
+            "LinePosition": null,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "c28a95dd-dce9-40e9-8714-8f394721ec31",
+            "Order": 0,
+            "Timestamp": 1774012205372,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1007",
+            "Description": "Extensive use of mesh colliders",
+            "Details": [
+                "Usage of mesh colliders has negative effect on performance. You can use primitive colliders instead."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "a0b2d863-a7c5-4a08-9ac5-340fbf11b96a",
+            "Order": 1,
+            "Timestamp": 1774012205372,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1014",
+            "Description": "We recommend running Runtime Analysis to find and remove all unused code",
+            "Details": [
+                "Navigate to the Runtime Analysis → Code tab to enable code stripping. Before uploading the playable, please make sure to have played all scenario’s of the playable in a development build to make Runtime Analysis work properly."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "77a88a51-b76c-4fea-8395-c9572c4aed29",
+            "Order": 2,
+            "Timestamp": 1774012205387,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1027",
+            "Description": "This DOTween version is not supported",
+            "Details": [
+                "The incorrect DOTween version for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "f440a567-d203-412a-bedf-c77e2367ba61",
+            "Order": 3,
+            "Timestamp": 1774012205387,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1015",
+            "Description": "This TMP version is not fully supported",
+            "Details": [
+                "The incorrect Text Mesh Pro for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "0aad1d75-58e8-4ec4-933f-0b153cd9f723",
+            "Order": 4,
+            "Timestamp": 1774012205388,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1032",
+            "Description": "Package(s) is not supported in Luna",
+            "Details": [
+                "Currently package(s) com.unity.timeline are not supported in Luna. We recommend you to remove it and workaround it's functionality."
+            ],
+            "DescriptionValues": [
+                "com.unity.timeline (1.7.4)"
+            ],
+            "DetailsValues": [
+                "com.unity.timeline"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "D:/Documents/GitHub/HXS_ColumnSort/Packages\\manifest.json",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "6f6204dc-22dd-44c6-80f3-56cd8ac90231",
+            "Order": 5,
+            "Timestamp": 1774012205390,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1010",
+            "Description": "Looks like a collider was scaled, this might affect performance.",
+            "Details": [
+                "Hex_Base",
+                "Ground",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base (1)",
+                "Hex_Base (2)"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 33,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        }
+    ]
+}

@@ -1,7 +1,16 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+[Serializable]
+public struct HandPositioningList
+{
+    public string id;
+    public List<Vector2> DragPositions;
+    public List<Vector2> BasePositions;
+}
 
 public class TutorialManager : MonoBehaviour
 {
@@ -22,6 +31,9 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] float currentTimer;
     [SerializeField] float maxTimer = 3;
     [SerializeField] bool timerCalled;
+
+    [Header("Zoom Out Positions")]
+    public List<HandPositioningList> handInfo = new List<HandPositioningList>();
 
     #region Instance Calling
     public static TutorialManager Instance;
@@ -180,7 +192,7 @@ public class TutorialManager : MonoBehaviour
                 int tries = 10;
                 while (true)
                 {
-                    int x = Random.Range(0, dragPos.Count);
+                    int x = UnityEngine.Random.Range(0, dragPos.Count);
                     if (GameManager.Instance.hexDraggers[x].GroupType != GroupType.None || tries == 0)
                     {
                         oldStarter = starterPos;
@@ -233,7 +245,7 @@ public class TutorialManager : MonoBehaviour
             int tries = 10;
             while (true)
             {
-                int x = Random.Range(0, basePos.Count);
+                int x = UnityEngine.Random.Range(0, basePos.Count);
                 if (!GameManager.Instance.hexBases[x].occupied || tries == 0)
                 {
                     target = basePos[x].anchoredPosition;
@@ -301,6 +313,21 @@ public class TutorialManager : MonoBehaviour
                 return;
             }
             index++;
+        }
+    }
+
+    public void UpdateHandPositioning(int remainingChildren)
+    {
+        int index = 12 - remainingChildren;
+
+        for (int i = 0; i < handInfo[index].DragPositions.Count; i++) //Dragger Positions
+        {
+            dragPos[i].anchoredPosition = handInfo[index].DragPositions[i];
+        }
+
+        for (int i = 0; i < handInfo[index].BasePositions.Count; i++) //Base Positions
+        {
+            basePos[i].anchoredPosition = handInfo[index].BasePositions[i];
         }
     }
 }

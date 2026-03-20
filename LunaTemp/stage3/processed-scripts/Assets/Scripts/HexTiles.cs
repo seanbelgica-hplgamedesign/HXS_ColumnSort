@@ -8,14 +8,19 @@ using static UnityEngine.GraphicsBuffer;
 public enum TileColor
 {
     Grey,
-    Red,
+    //Red,
+    //Violet,
+    //Blue,
+    //LightBlue,
+    //Green,
+    //Yellow,
+    //Orange
     Violet,
-    Blue,
-    LightBlue,
-    Green,
     Yellow,
-    Orange
-}
+    Red,
+    Green,
+    Blue
+}   
 
 public class HexTiles : MonoBehaviour
 {
@@ -42,19 +47,21 @@ public class HexTiles : MonoBehaviour
 
     public int TransferTiles(Transform target, int index, bool second)
     {
-        float prevTileY = 1.25f;
+        float prevTileY = target.position.y;
         foreach (GameObject tile in singleTile)
         {
             Transform childTile = tile.transform.GetChild(0);
             tile.transform.LookAt(target); float posY = tile.transform.eulerAngles.y - 180;
             tile.transform.eulerAngles = new Vector3(0, posY, 0);
 
-            float jumpPower = prevTileY - tile.transform.position.y; 
-            while (jumpPower < 0) { jumpPower += perSingleTiles; } if (tile == singleTile[0]) Debug.Log(jumpPower);
-            prevTileY = tile.transform.position.y;
+            float jumpPower = tile.transform.position.y - prevTileY;
+            int x = 0; while (jumpPower > 3) { jumpPower -= 3; x++; }
+            Debug.Log(x);
+            //while (jumpPower < 0) { jumpPower += perTiles; } 
+            //prevTileY = tile.transform.position.y; Debug.Log(jumpPower);
 
             Sequence seq = DOTween.Sequence();
-            seq.Insert((sequenceDuration / 8) * index, tile.transform.DOJump(target.transform.position + ((Vector3.up * perTiles) + (Vector3.up * perSingleTiles * index)), jumpPower + 0.5f, 1, sequenceDuration).OnStart(() =>
+            seq.Insert((sequenceDuration / 8) * index, tile.transform.DOJump(target.transform.position + ((Vector3.up * perTiles) + (Vector3.up * perSingleTiles * index)), 0.75f + (1.5f * x), 1, sequenceDuration).OnStart(() =>
             {
                 AudioManager.Instance.PlaySFX("Transfer");
             }).OnComplete(() =>
