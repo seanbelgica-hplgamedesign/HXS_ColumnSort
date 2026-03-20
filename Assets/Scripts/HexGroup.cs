@@ -1,9 +1,7 @@
 using DG.Tweening;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public enum GroupType
 {
@@ -119,14 +117,32 @@ public class HexGroup : MonoBehaviour
         CheckIfEmpty();
     }
 
-    public void RandomizeTile()
+    public void RandomizeTile(int index0, int index1)
     {
-        int index0 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length);
+        HexGroup replacer = GameManager.Instance.currentReplacer;
+
+        //Index0 Color Picker
+        int index = 1;
+        foreach (int i in GameManager.Instance.replacerChances)
+        {
+            if (index0 < i){ index0 = index; break; }
+            index++;
+        }
         HexTiles[0].tileColor = (TileColor)index0;
         HexTiles[1].tileColor = (TileColor)index0;
 
-        int index1 = 0; //1 in 2 chance to have different color
-        if (UnityEngine.Random.Range(0, 2) == 0) { index1 = UnityEngine.Random.Range(1, Enum.GetNames(typeof(TileColor)).Length); HexTiles[1].tileColor = (TileColor)index1; }
+        if (Random.Range(0, 4) == 0) //1 in 2 chance to have different color
+        {
+            // Index1 Color Picker
+            index = 1;
+            foreach (int i in GameManager.Instance.replacerChances)
+            {
+                if (index1 < i) { Debug.Log(index1 + "|" + index); index1 = index; break; }
+                index++;
+            }
+
+            HexTiles[0].tileColor = (TileColor)index1;
+        }
     }
     #endregion
 
@@ -278,6 +294,7 @@ public class HexGroup : MonoBehaviour
         transferIndex = 0;
         isTransferring = true;
         receiver.isTransferring = true;
+        GameManager.Instance.UpdateRandomizerChances();
         transferIndex = topTile.TransferTiles(receiver.topTile.transform, transferIndex, false);
         if (secondTopTile) { transferIndex = secondTopTile.TransferTiles(receiver.topTile.transform, transferIndex, true); }
     }
@@ -289,7 +306,6 @@ public class HexGroup : MonoBehaviour
         {
             if (!GameManager.Instance.firstFullStack)
             {
-                Debug.Log(name);
                 GameManager.Instance.firstFullStack = true;
                 oneStack = true;
             }
@@ -306,7 +322,7 @@ public class HexGroup : MonoBehaviour
 
         CheckHexTiles();
         bool fullyEmpty = false;
-        if (stackNum == HexTiles.Count) { fullyEmpty = true; Debug.Log(transform.parent.name + " fullyEmpty"); }
+        if (stackNum == HexTiles.Count) { fullyEmpty = true; }
         int index = 0;
         float lastPosY = 0;
         disappearingTiles.Add(topTile);
@@ -437,17 +453,12 @@ public class HexGroup : MonoBehaviour
 
     public void FinishMerge(float lastPosY, bool fullyEmpty)
     {
-        //yield return new WaitForSeconds(delay);
-        //yield return new WaitUntil(() => disappearingTiles.Count == 0);
-
-        Debug.Log("a");
         if (topTile) DestroyImmediate(topTile.gameObject);
         if (secondTopTile) DestroyImmediate(secondTopTile.gameObject);
         if (thirdTopTile) DestroyImmediate(thirdTopTile.gameObject);
-        Debug.Log("b");
         foreach (HexTiles tiles in extraSameTiles)
         {
-            Destroy(tiles.gameObject);
+            DestroyImmediate(tiles.gameObject);
         }
         disappearingTiles.Clear();
         GetComponentInParent<HexBase>().sparkleVFX.transform.position = GetComponentInParent<HexBase>().sparkleVFX.transform.position + (Vector3.up * (lastPosY));

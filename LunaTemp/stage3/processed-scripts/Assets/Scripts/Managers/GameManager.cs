@@ -1,6 +1,5 @@
 using DG.Tweening;
 using Luna.Unity;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     [Header("Basic Info")]
     public List<Material> tileMats;
+    public List<int> replacerChances;
     public GameObject Ground;
     public Transform replacerParent;
     public Transform hexNorth;
@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviour
         if (replacerParent.childCount > 0)
         {
             currentReplacer = replacerParent.GetChild(0).GetComponent<HexGroup>();
+            UpdateRandomizerChances();
             currentMixers.Insert(0, currentReplacer);
             Destroy(oldReplacer.gameObject);
 
@@ -102,16 +103,66 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void UpdateRandomizerChances()
+    {
+        HexGroup replacer = currentReplacer;
+        int red = 1; int violet = 1; int blue = 1; int cyan = 1;
+        int green = 1; int yellow = 1; int orange = 1;
+
+        int extra = 0;
+        if (replacer.isTransferring && replacer.HexTiles.Count == 1) replacer = replacerParent.GetChild(0).GetComponent<HexGroup>(); 
+        //Happens when replaces is transferring and will go to next replacer
+
+        if (!replacer.isTransferring) { extra += (2 * (replacer.HexTiles.Count - 1)); }
+        //Checks if reference is transferring
+
+        foreach (HexTiles tiles in replacer.HexTiles)
+        {
+            if (tiles == replacer.topTile) // +4 chances for top tiles
+            {
+                switch ((int)tiles.tileColor) //Prioritizing Top Tile
+                {
+                    case 1: red += extra; break;
+                    case 2: violet += extra; break;
+                    case 3: blue += extra; break;
+                    case 4: cyan += extra; break;
+                    case 5: green += extra; break;
+                    case 6: yellow += extra; break;
+                    case 7: orange += extra; break;
+                }
+            }
+
+            switch ((int)tiles.tileColor)
+            {
+                case 1: red += 2; break;
+                case 2: violet += 2; break;
+                case 3: blue += 2; break;
+                case 4: cyan += 2; break;
+                case 5: green += 2; break;
+                case 6: yellow += 2; break;
+                case 7: orange += 2; break;
+            }
+        }
+        violet += red; blue += violet; cyan += blue; green += cyan; yellow += green; orange += yellow;
+        Debug.Log((red - 1) + "|" + (violet - red - 1) + "|" + (blue - violet - 1) + "|" + (cyan - blue - 1) 
+            + "|" + (green - cyan - 1) + "|" + (yellow - green - 1) + "|" + (orange - yellow - 1));
+
+        replacerChances.Clear();
+        replacerChances.Add(red); replacerChances.Add(violet); replacerChances.Add(blue); replacerChances.Add(cyan);
+        replacerChances.Add(green); replacerChances.Add(yellow); replacerChances.Add(orange);
+    }
+
     public void CheckDraggerCount()
     {
         if (hexDragParent.childCount == 1)
         {
+            UpdateRandomizerChances();
             hexDraggers.Clear();
             for (int i = 0; i < 3; i++)
             {
                 GameObject g = Instantiate(hexDragPrefab, hexDragPrefab.transform.position, Quaternion.identity, hexDragParent);
                 g.GetComponent<HexGroup>().GroupType = GroupType.Dragger;
-                g.GetComponent<HexGroup>().RandomizeTile();
+                g.GetComponent<HexGroup>().RandomizeTile(Random.Range(0, replacerChances[replacerChances.Count - 1]), Random.Range(0, replacerChances[replacerChances.Count - 1]));
                 g.transform.transform.localPosition = new Vector3(-1.75f + (i * 1.75f), 0, 0);
                 g.transform.localScale = Vector3.zero;
                 g.transform.DOScale(1, 0.75f);
@@ -134,7 +185,7 @@ public class GameManager : MonoBehaviour
                 giver.CheckHexTiles();
                 if (!receiver.isTransferring && !giver.isTransferring)
                 {
-                    if (!receiver.isEmptying)
+                    if (!receiver.isEmptying && !giver.isEmptying)
                     {
                         if (receiver != giver)
                         {
@@ -154,7 +205,7 @@ public class GameManager : MonoBehaviour
         UpdateAllMixer("CSMT3");
 
         if (firstFullStack) return;
-        Debug.Log("No more merging needed");
+        //Debug.Log("No more merging needed");
         StartCoroutine(CheckAllOccupied());
     }
 
@@ -223,10 +274,10 @@ public class GameManager : MonoBehaviour
 
     public void FinishEmptying(float lastPosY, HexGroup emptyHex, bool fullyEmpty)
     {
-        Debug.Log("Check Again");
         if (fullyEmpty) emptyHex.CheckIfEmpty();
         UpdateAllMixer("CheckAgain");
         firstFullStack = false;
+        Debug.Log(emptyHex.transform.childCount);
 
         //GameManager.Instance.UpdateAllMixer("RS");
         //if (oneStack) { CheckIfEmpty(); GameManager.Instance.CheckAgain(); }
@@ -235,7 +286,6 @@ public class GameManager : MonoBehaviour
 
     public void CheckAgain()
     {
-        Debug.Log("Check Again");
         UpdateAllMixer("CheckAgain");
         firstFullStack = false;
         

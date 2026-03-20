@@ -5416,6 +5416,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 2e1c2ca0a91eaf747ae9b178af058167, type: 2}
   - {fileID: 2100000, guid: 378714dd5a31d0f40a71a7fbde449f6b, type: 2}
   - {fileID: 2100000, guid: e8f41ce6b428f3a44a3b4a42bd2d376c, type: 2}
+  replacerChances: 
   Ground: {fileID: 1888355181}
   replacerParent: {fileID: 637134806}
   hexNorth: {fileID: 981592556}
@@ -5440,6 +5441,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   firstFullStack: 0
+  topTileChances: 2
+  tileChances: 10
   currentHexDrag: {fileID: 0}
   hexDragPrefab: {fileID: 3942158673699992258, guid: c5dcf7d77fe07f744ba28680284694be, type: 3}
   hexDragParent: {fileID: 1687225121}

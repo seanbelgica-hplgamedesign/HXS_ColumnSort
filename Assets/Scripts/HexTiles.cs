@@ -49,8 +49,8 @@ public class HexTiles : MonoBehaviour
             tile.transform.LookAt(target); float posY = tile.transform.eulerAngles.y - 180;
             tile.transform.eulerAngles = new Vector3(0, posY, 0);
 
-            float jumpPower = prevTileY - tile.transform.position.y;
-            if (jumpPower < 0) { jumpPower = 0; }
+            float jumpPower = prevTileY - tile.transform.position.y; 
+            while (jumpPower < 0) { jumpPower += perSingleTiles; } if (tile == singleTile[0]) Debug.Log(jumpPower);
             prevTileY = tile.transform.position.y;
 
             Sequence seq = DOTween.Sequence();
