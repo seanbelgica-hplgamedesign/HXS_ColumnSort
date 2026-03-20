@@ -1,29 +1,28 @@
 using DG.Tweening;
 using Luna.Unity;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     [Header("Basic Info")]
     public List<Material> tileMats;
     public GameObject Ground;
-    public Transform replacerParent;
-    public Transform hexNorth;
     public List<HexBase> hexBases;
+    public List<HexGroup> hexBoard;
     public List<HexGroup> hexDraggers;
-    public HexGroup emptyDrag;
     public List<HexGroup> currentMixers;
-    public HexGroup currentReplacer;
-    public List<HexGroup> nearbyReplacerHexes;
-    public bool firstFullStack;
+    public HexGroup emptyDrag;
 
     [Header ("Dragger Info")]
     public HexGroup currentHexDrag;
     [SerializeField] GameObject hexDragPrefab;
-    [SerializeField] Transform hexDragParent;
+
+    [Header("Scoring Info")]
+    [SerializeField] int requiredScore;
+    public int currentScore;
     #region Instance Calling
     public static GameManager Instance;
     void Awake()
@@ -41,9 +40,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Intro Scene
-
-        //*
+        UpdateAllMixers();
         LifeCycle.GameStarted();
         Analytics.LogEvent(Analytics.EventType.LevelStart);
         StartCoroutine(WaitForTap());
@@ -66,141 +63,47 @@ public class GameManager : MonoBehaviour
         {
             Ground.GetComponent<Collider>().enabled = false;
         }
-
-        //Debug Mode
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ReplaceNewTiles();
-        }
     }
 
-    public void ReplaceNewTiles()
+    public void CreateNewDragger(Transform parent, int dragNum)
     {
-        currentMixers.Remove(currentReplacer);
-        HexGroup oldReplacer = currentReplacer;
-        if (replacerParent.childCount > 0)
-        {
-            currentReplacer = replacerParent.GetChild(0).GetComponent<HexGroup>();
-            currentMixers.Insert(0, currentReplacer);
-            Destroy(oldReplacer.gameObject);
+        HexGroup drag = Instantiate(hexDragPrefab, parent).GetComponent<HexGroup>();
+        drag.draggerNum = dragNum;
 
-            foreach (Transform t in replacerParent)
+        int red = 0; int green = 0; int blue = 0; int yellow = 0;
+        foreach (HexGroup board in hexBoard)
+        {
+            switch (board.stackColor)
             {
-                t.DOMoveZ(t.transform.position.z - 1.5f, 0.125f);
-            }
-            currentReplacer.GroupType = GroupType.Mixer;
-            currentReplacer.transform.SetParent(hexNorth);
-            currentReplacer.transform.parent.GetComponent<HexBase>().occupiedHex = currentReplacer;
-            currentReplacer.CheckHexTiles();
-            //UpdateAllMixer("RNT");
-            CheckSimilarTopTiles();
-        }
-        else
-        {
-            Debug.Log("You somehow got all of them");
-            IterationManager.Instance.CompleteGame();
-        }
-    }
-
-    public void CheckDraggerCount()
-    {
-        if (hexDragParent.childCount == 1)
-        {
-            hexDraggers.Clear();
-            for (int i = 0; i < 3; i++)
-            {
-                GameObject g = Instantiate(hexDragPrefab, hexDragPrefab.transform.position, Quaternion.identity, hexDragParent);
-                g.GetComponent<HexGroup>().GroupType = GroupType.Dragger;
-                g.GetComponent<HexGroup>().RandomizeTile();
-                g.transform.transform.localPosition = new Vector3(-1.75f + (i * 1.75f), 0, 0);
-                g.transform.localScale = Vector3.zero;
-                g.transform.DOScale(1, 0.75f);
-
-                hexDraggers.Add(g.GetComponent<HexGroup>());
+                case TileColor.Red: red++; break;
+                case TileColor.Green: green++; break;
+                case TileColor.Blue: blue++; break;
+                case TileColor.Yellow: yellow++; break;
             }
         }
+        green += red;
+        blue += green;
+        yellow += green;
+
+        int color = Random.Range(0, hexBoard.Count);
+        if (color <= red) color = 0; else if (color <= green) color = 1; else if (color <= blue) color = 2; else color = 3;
+        drag.RandomizeTile(color);
     }
 
-    public void CheckSimilarTopTiles()
+    public void UpdateAllMixers()
     {
-        if (firstFullStack) { foreach (HexGroup mixer in currentMixers) { mixer.CheckFullStack(); } }
-        UpdateAllMixer("CSMT1");
-
-        foreach (HexGroup giver in currentMixers)
-        {
-            foreach (HexGroup receiver in giver.nearbyHex)
-            {
-                receiver.CheckHexTiles();
-                giver.CheckHexTiles();
-                if (!receiver.isTransferring && !giver.isTransferring)
-                {
-                    if (!receiver.isEmptying)
-                    {
-                        if (receiver != giver)
-                        {
-                            if (receiver.topTile.tileColor == giver.topTile.tileColor && giver.stackNum < 3)
-                            {
-                                giver.TransferTiles(receiver);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //Debug.Log("No more similar top tiles");
-        bool noStack = CheckFullStacks();
-        if (noStack) return;
-        UpdateAllMixer("CSMT3");
-
-        if (firstFullStack) return;
-        Debug.Log("No more merging needed");
-        StartCoroutine(CheckAllOccupied());
-    }
-
-    public void UpdateAllMixer(string name)
-    {
-        //foreach (HexBase b in hexBases) { b.UpdateOccupied(); }
-
-        HexGroup hex = currentMixers[currentMixers.Count - 1];
         currentMixers.Clear();
         foreach (HexBase bases in hexBases)
         {
             if (bases.occupied)
             {
-                if (bases.occupiedHex.Replacer)
-                {
-                    currentMixers.Insert(0, bases.occupiedHex);
-                }
-                else
-                {
-                    currentMixers.Add(bases.occupiedHex);
-                }
+                currentMixers.Add(bases.occupiedHex);
+                if (bases.occupiedHex.boardStack) { hexBoard.Add(bases.occupiedHex); }
             }
         }
-        currentMixers.Remove(hex);
-        currentMixers.Add(hex);
 
-        foreach (HexGroup group in currentMixers)
-        {
-            group.CheckHexTiles();
-        }
-        foreach (HexGroup group in currentMixers)
-        {
-            group.UpdateNearbyTiles();
-            //if (name == "CSMT1") { Debug.Log(group.HexTiles.Count); }
-        }
-    }
-
-    public bool CheckFullStacks()
-    {
-        foreach (HexGroup mixer in currentMixers) { if (mixer.isEmptying) return true; if (mixer.isTransferring) return true; }
-
-        foreach (HexGroup mixer in currentMixers)
-        {
-            if (!mixer.isEmptying) mixer.CheckFullStack();
-        }
-        return false;
+        foreach (HexGroup mixers in currentMixers) { mixers.UpdateTileCount(); }
+        foreach (HexGroup mixers in currentMixers) { mixers.UpdateNearbyTiles(); }
     }
 
     public IEnumerator CheckAllOccupied()
@@ -219,27 +122,5 @@ public class GameManager : MonoBehaviour
             Debug.Log("All Bases have been Occupied");
             CTAManager.Instance.ShowLoseCard();
         }
-    }
-
-    public void FinishEmptying(float lastPosY, HexGroup emptyHex, bool fullyEmpty)
-    {
-        Debug.Log("Check Again");
-        if (fullyEmpty) emptyHex.CheckIfEmpty();
-        UpdateAllMixer("CheckAgain");
-        firstFullStack = false;
-
-        //GameManager.Instance.UpdateAllMixer("RS");
-        //if (oneStack) { CheckIfEmpty(); GameManager.Instance.CheckAgain(); }
-        CheckSimilarTopTiles();
-    }
-
-    public void CheckAgain()
-    {
-        Debug.Log("Check Again");
-        UpdateAllMixer("CheckAgain");
-        firstFullStack = false;
-        
-        //Check Again for confirmation
-        CheckSimilarTopTiles();
     }
 }

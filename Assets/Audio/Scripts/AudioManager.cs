@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Core.Services;
 using UnityEngine;
 
@@ -13,6 +12,7 @@ public class AudioManager : MonoBehaviour, IAudioService
 
     [Header("SFX Pool Settings")]
     public int sfxPoolSize = 10;
+    [SerializeField] int sfxMultiplier;
 
     private Queue<AudioSource> sfxPool = new Queue<AudioSource>();
     private AudioSource musicSource;
@@ -67,6 +67,21 @@ public class AudioManager : MonoBehaviour, IAudioService
     void OnDisable()
     {
         ServicesLocator.Unregister<IAudioService>();
+    }
+
+    public void AddMoreAudio()
+    {
+        sfxMultiplier++;
+        for (int i = 0; i < sfxPoolSize; i++)
+        {
+            var go = new GameObject($"SFX_Source_{(i * sfxMultiplier) + i}");
+            go.transform.parent = transform;
+            var src = go.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.loop = false;
+            src.volume = sfxVolume;
+            sfxPool.Enqueue(src);
+        }
     }
 
     #region Public API

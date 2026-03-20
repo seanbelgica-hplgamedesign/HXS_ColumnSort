@@ -99,8 +99,8 @@ public class TutorialManager : MonoBehaviour
         tutorialPanel.DOFade(1, 0.25f);
         tutorialTiles.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         tutorialText.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        GameManager.Instance.hexDraggers[0].draggable = false;
-        GameManager.Instance.hexDraggers[2].draggable = false;
+        //GameManager.Instance.hexDraggers[0].draggable = false;
+        //GameManager.Instance.hexDraggers[2].draggable = false;
         handTool.GetComponent<CanvasGroup>().alpha = 1;
         handTool.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         GetStarterPos();
@@ -115,8 +115,8 @@ public class TutorialManager : MonoBehaviour
         tutorialTiles.DOKill();
         tutorialText.DOKill();
         
-        GameManager.Instance.hexDraggers[0].draggable = true;
-        GameManager.Instance.hexDraggers[2].draggable = true;
+        //GameManager.Instance.hexDraggers[0].draggable = true;
+        //GameManager.Instance.hexDraggers[2].draggable = true;
 
         ResetTimer();
         IntroAnim = false;
@@ -161,7 +161,7 @@ public class TutorialManager : MonoBehaviour
                             int index = 0;
                             foreach (HexGroup drag in GameManager.Instance.hexDraggers)
                             {
-                                if (drag != GameManager.Instance.emptyDrag && drag.topTile.tileColor == b.occupiedHex.topTile.tileColor)
+                                if (drag != GameManager.Instance.emptyDrag && drag.stackColor == b.occupiedHex.stackColor)
                                 {
                                     //Debug.Log("Choosing held hand");
                                     oldStarter = starterPos;
@@ -204,7 +204,7 @@ public class TutorialManager : MonoBehaviour
             {
                 if (b.occupied) //Check if a base is occupied
                 {
-                    if (b.occupiedHex.topTile.tileColor == dragger.topTile.tileColor) // Check if toptile color is the same with dragger's toptile color
+                    if (b.occupiedHex.stackColor == dragger.stackColor) // Check if toptile color is the same with dragger's toptile color
                     {
                         foreach (HexBase nearby in b.nearbyBases) //Look for any nearby base
                         {
