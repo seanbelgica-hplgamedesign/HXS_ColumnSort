@@ -45,7 +45,7 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
-        //if (GameManager.Instance.IsTransferring) { currentTimer = 3; return; }
+        if (LevelManager.Instance.levelPicking) { currentTimer = 3; return; }
         foreach (HexGroup h in GameManager.Instance.currentMixers) { if (h.isEmptying) { currentTimer = 3; return; } if (h.isTransferring) { currentTimer = 3; return; } }
 
         if (!IntroAnim && !CTAManager.Instance.GameOver)
@@ -132,7 +132,6 @@ public class TutorialManager : MonoBehaviour
         }
         else
         {
-            dragger = null;
             while (true)
             {
                 if (GameManager.Instance.currentHexDrag)
@@ -154,23 +153,21 @@ public class TutorialManager : MonoBehaviour
                 }
                 else
                 {
-                    foreach (HexBase b in GameManager.Instance.hexBases)
+                    foreach (HexGroup drag in GameManager.Instance.hexDraggers)
                     {
-                        if (b.occupied)
+                        foreach (HexBase b in GameManager.Instance.hexBases)
                         {
-                            int index = 0;
-                            foreach (HexGroup drag in GameManager.Instance.hexDraggers)
+                            if (b.occupied)
                             {
-                                if (drag != GameManager.Instance.emptyDrag && drag.stackColor == b.occupiedHex.stackColor)
+                                if (drag.stackColor == b.occupiedHex.stackColor)
                                 {
                                     //Debug.Log("Choosing held hand");
                                     oldStarter = starterPos;
-                                    dragger = GameManager.Instance.hexDraggers[index];
-                                    starterPos = dragPos[index].anchoredPosition;
+                                    dragger = drag;
+                                    starterPos = dragPos[drag.draggerNum - 1].anchoredPosition;
                                     handTool.anchoredPosition = starterPos;
                                     return;
                                 }
-                                index++;
                             }
                         }
                     }
@@ -301,6 +298,22 @@ public class TutorialManager : MonoBehaviour
                 return;
             }
             index++;
+        }
+    }
+
+    public void UpdatePositions(GameObject baseParent)
+    {
+        baseParent.transform.SetParent(this.transform);
+
+        basePos.Clear();
+        foreach (Transform t in baseParent.transform.GetChild(0))
+        {
+            basePos.Add(t.GetComponent<RectTransform>());
+        }
+        dragPos.Clear();
+        foreach (Transform t in baseParent.transform.GetChild(1))
+        {
+            dragPos.Add(t.GetComponent<RectTransform>());
         }
     }
 }

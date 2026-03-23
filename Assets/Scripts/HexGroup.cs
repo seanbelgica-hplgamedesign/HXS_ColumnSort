@@ -20,9 +20,12 @@ public class HexGroup : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     public GroupType GroupType;
     public TileColor stackColor;
-    public bool boardStack;
     [SerializeField] List<HexTiles> HexTiles;
     public int draggerNum;
+
+    [Header ("Board Stacks")]
+    public bool boardStack;
+    public HexGroup dragReference;
 
     [Header ("Boolean Checks")]
     public bool isTweening;
@@ -69,16 +72,17 @@ public class HexGroup : MonoBehaviour
         CheckFullStack();
     }
 
-    public void RandomizeTile(int color)
+    public void RandomizeTile(TileColor color)
     {
         UpdateTileCount();
-        foreach (HexTiles tiles in HexTiles) { tiles.tileColor = (TileColor)color; tiles.UpdateColor(); }
+        foreach (HexTiles tiles in HexTiles) { tiles.tileColor = color; tiles.UpdateColor(); }
     }
     #endregion
 
     #region Drag&Drop
     private void OnMouseDown()
     {
+        if (LevelManager.Instance.levelPicking) return;
         if (CTAManager.Instance.GameOver) return;
         if (CameraInfo.Instance.IntroCamera) return;
         if (GroupType != GroupType.Dragger) return;
@@ -179,16 +183,21 @@ public class HexGroup : MonoBehaviour
                         transform.parent.GetComponentInParent<HexBase>().occupiedHex = this;
 
                         GameManager.Instance.UpdateAllMixers();
+                        GameManager.Instance.hexDraggers.Remove(this);
                         CheckForPossibleTransfers();
 
-                        GameManager.Instance.CreateNewDragger(oldParent, draggerNum);
+                        foreach (HexGroup board in GameManager.Instance.hexBoard)
+                        {
+                            if (board.dragReference == this)
+                            {
+                                board.dragReference = null;
+                                break;
+                            }
+                        }
+                        GameManager.Instance.CreateNewDragger(draggerNum, false);
+
                     });
                     transform.SetParent(hit.collider.transform);
-
-                    //for (int i = 0; i < GameManager.Instance.hexDraggers.Count; i++)
-                    //{
-                    //    if (this == GameManager.Instance.hexDraggers[i]) { GameManager.Instance.hexDraggers[i] = GameManager.Instance.emptyDrag; break; }
-                    //}
                     GameManager.Instance.currentHexDrag = null;
 
                     AudioManager.Instance.PlaySFX("PlaceDrag");
@@ -211,8 +220,13 @@ public class HexGroup : MonoBehaviour
         {
             if (hex.stackColor == this.stackColor)
             {
-                TransferTiles(hex);
-                return;
+                if (!hex.isTransferring && !hex.isEmptying)
+                {
+                    if (hex.boardStack) { hex.dragReference = null; GameManager.Instance.hexBoard.Remove(hex); }
+
+                    TransferTiles(hex);
+                    return;
+                }
             }
         }
     }
@@ -222,6 +236,7 @@ public class HexGroup : MonoBehaviour
         int index = 0;
         isTransferring = true;
         receiver.isTransferring = true;
+        if (receiver.boardStack) GameManager.Instance.UpdateScore(tilesNeeded);
 
         Sequence transfer = DOTween.Sequence();
         for (int i = HexTiles.Count - 1; i > -1; i--)
@@ -231,7 +246,7 @@ public class HexGroup : MonoBehaviour
             tiles.transform.LookAt(receiver.transform); float posY = tiles.transform.eulerAngles.y - 180;
             tiles.transform.eulerAngles = new Vector3(0, posY, 0);
 
-            Vector3 newPos = receiver.HexTiles[receiver.HexTiles.Count - 1].transform.position + (Vector3.up * (1.2f + (0.2f * index)));
+            Vector3 newPos = receiver.HexTiles[receiver.HexTiles.Count - 1].transform.position + (Vector3.up * (0.2f * index));
             transfer.Insert(TransferDelay * index, tiles.transform.DOJump(newPos, 0.2f * (index + 1), 1, TransferTime)
             .OnStart(() => { AudioManager.Instance.PlaySFX("Transfer"); })
                 .OnComplete(() => { tiles.transform.eulerAngles = Vector3.zero; }));
@@ -246,7 +261,7 @@ public class HexGroup : MonoBehaviour
             index = 0;
             foreach (HexTiles tiles in HexTiles)
             {
-                Vector3 newPos = receiver.HexTiles[receiver.HexTiles.Count - 1].transform.position + (Vector3.up * (1.2f + (0.2f * index)));
+                Vector3 newPos = receiver.HexTiles[receiver.HexTiles.Count - 1].transform.position + (Vector3.up * (0.2f * index));
                 tiles.transform.SetParent(receiver.transform); tiles.transform.position = newPos; index++;
             }
 
@@ -258,9 +273,10 @@ public class HexGroup : MonoBehaviour
 
     public void CheckFullStack()
     {
+        if (GroupType != GroupType.Mixer) return;
         if (isEmptying) return;
 
-        if (HexTiles.Count > tilesNeeded)
+        if (HexTiles.Count >= tilesNeeded)
         {
             isEmptying = true;
 
@@ -275,15 +291,21 @@ public class HexGroup : MonoBehaviour
 
             merge.OnComplete(() =>
             {
-                GetComponentInParent<HexBase>().sparkleVFX.Play();
-                AudioManager.Instance.PlaySFX("FullStack");
-
-                isEmptying = false;
-                UpdateTileCount();
+                StartCoroutine(DelayFullMerge());
             });
 
             merge.Play();
         }
+    }
+
+    public IEnumerator DelayFullMerge()
+    {
+        yield return new WaitUntil(() => transform.childCount == 0);
+        GetComponentInParent<HexBase>().sparkleVFX.Play();
+        AudioManager.Instance.PlaySFX("FullStack");
+
+        isEmptying = false;
+        UpdateTileCount();
     }
 
     public void CheckIfEmpty()
@@ -293,8 +315,6 @@ public class HexGroup : MonoBehaviour
             GameManager.Instance.currentMixers.Remove(this);
             transform.parent.GetComponent<HexBase>().occupied = false;
             transform.parent.GetComponent<HexBase>().occupiedHex = null;
-
-            if (boardStack) GameManager.Instance.currentScore += 10;
 
             GameManager.Instance.UpdateAllMixers();
             DestroyImmediate(this.gameObject);

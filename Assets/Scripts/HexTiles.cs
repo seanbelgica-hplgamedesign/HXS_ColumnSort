@@ -10,7 +10,8 @@ public enum TileColor
     Red,
     Green,
     Blue,
-    Yellow
+    Yellow,
+    Violet
 }
 
 public class HexTiles : MonoBehaviour

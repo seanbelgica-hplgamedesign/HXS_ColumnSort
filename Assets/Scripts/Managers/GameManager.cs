@@ -2,6 +2,7 @@ using DG.Tweening;
 using Luna.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,10 +20,17 @@ public class GameManager : MonoBehaviour
     [Header ("Dragger Info")]
     public HexGroup currentHexDrag;
     [SerializeField] GameObject hexDragPrefab;
+    [SerializeField] GameObject hexDragParent;
 
     [Header("Scoring Info")]
-    [SerializeField] int requiredScore;
     public int currentScore;
+    public int requiredScore;
+    [SerializeField] TextMeshProUGUI scoreTxt;
+    [SerializeField] Image scoreFill;
+    [SerializeField] bool easyMode;
+    [SerializeField] bool mediumMode;
+    [SerializeField] bool hardMode;
+
     #region Instance Calling
     public static GameManager Instance;
     void Awake()
@@ -40,7 +48,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UpdateAllMixers();
         LifeCycle.GameStarted();
         Analytics.LogEvent(Analytics.EventType.LevelStart);
         StartCoroutine(WaitForTap());
@@ -65,34 +72,70 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CreateNewDragger(Transform parent, int dragNum)
+    public void RemakeDraggers()
     {
-        HexGroup drag = Instantiate(hexDragPrefab, parent).GetComponent<HexGroup>();
-        drag.draggerNum = dragNum;
-
-        int red = 0; int green = 0; int blue = 0; int yellow = 0;
-        foreach (HexGroup board in hexBoard)
+        for (int i = 0; i < hexDraggers.Count; i++)
         {
-            switch (board.stackColor)
-            {
-                case TileColor.Red: red++; break;
-                case TileColor.Green: green++; break;
-                case TileColor.Blue: blue++; break;
-                case TileColor.Yellow: yellow++; break;
-            }
-        }
-        green += red;
-        blue += green;
-        yellow += green;
+            HexGroup drag = hexDraggers[i];
 
-        int color = Random.Range(0, hexBoard.Count);
-        if (color <= red) color = 0; else if (color <= green) color = 1; else if (color <= blue) color = 2; else color = 3;
-        drag.RandomizeTile(color);
+            hexDraggers.Remove(drag);
+            DestroyImmediate(drag);
+        }
+
+        for (int i = 0; i < 3; i++) { CreateNewDragger(i + 1, true); }
+    }
+
+    public void CreateNewDragger(int dragNum, bool first)
+    {
+        bool noReferenceCheck = true; foreach (HexGroup board in hexBoard) if (!board.dragReference) { noReferenceCheck = false; break; } if (noReferenceCheck) return;
+
+        if (hexDragParent.transform.GetChild(dragNum).childCount != 0)
+        {
+            GameObject dragger = hexDragParent.transform.GetChild(dragNum).GetChild(0).gameObject;
+            hexDraggers.Remove(dragger.GetComponent<HexGroup>());
+            DestroyImmediate(dragger);
+        }
+
+        HexGroup drag = Instantiate(hexDragPrefab, hexDragParent.transform.GetChild(dragNum)).GetComponent<HexGroup>();
+        hexDraggers.Add(drag);
+        drag.draggerNum = dragNum;
+        drag.transform.localScale = Vector3.zero;
+        drag.transform.DOScale(1, 0.25f);
+        if (!first)
+        {
+            int index;
+            while (true)
+            {
+                index = Random.Range(0, hexBoard.Count);
+                if (!hexBoard[index].dragReference)
+                {
+                    hexBoard[index].dragReference = drag;
+                    break;
+                }
+            }
+            TileColor color = hexBoard[index].stackColor;
+            drag.RandomizeTile(color);
+        }
+        else
+        {
+
+            TileColor target;
+            if (dragNum == 1) target = TileColor.Green; else if (dragNum == 2) target = TileColor.Blue; else target = TileColor.Red;
+            for (int i = 0; i < hexBoard.Count; i++)
+            {
+                if (!hexBoard[i].dragReference)
+                {
+                    if (hexBoard[i].stackColor == target) { hexBoard[i].dragReference = drag; drag.RandomizeTile(hexBoard[i].stackColor); return; }
+                }
+            }
+            
+        }
     }
 
     public void UpdateAllMixers()
     {
         currentMixers.Clear();
+        hexBoard.Clear();
         foreach (HexBase bases in hexBases)
         {
             if (bases.occupied)
@@ -122,5 +165,35 @@ public class GameManager : MonoBehaviour
             Debug.Log("All Bases have been Occupied");
             CTAManager.Instance.ShowLoseCard();
         }
+    }
+
+    //Score Checking
+    public void UpdateScore(int score)
+    {
+        if (score == 0) { currentScore = 0; } //Reset Score
+
+        currentScore += score;
+        scoreTxt.text = currentScore + " / " + requiredScore;
+        float newFill = (float)currentScore / (float)requiredScore;
+        scoreFill.DOKill();
+        scoreFill.DOFillAmount(newFill, newFill);
+
+        if (currentScore == requiredScore) StartCoroutine(ShowLevelSelector());
+    }
+
+    public IEnumerator ShowLevelSelector()
+    {
+        yield return new WaitForSeconds(1f);
+
+        Debug.Log("You win!");
+        if (requiredScore == 40) easyMode = true;
+        if (requiredScore == 150) mediumMode = true;
+        if (requiredScore == 250) hardMode = true;
+
+        if (easyMode && mediumMode && hardMode) { IterationManager.Instance.CompleteGame(); yield break; } //All Mode Completed
+
+        currentScore = 0;
+        LevelManager.Instance.OpenLevelSelector(mediumMode, hardMode);
+
     }
 }

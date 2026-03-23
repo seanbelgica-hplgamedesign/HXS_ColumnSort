@@ -55,11 +55,12 @@ MonoBehaviour:
     m_Bits: 8
   GroupType: 2
   stackColor: 0
-  boardStack: 0
   HexTiles:
   - {fileID: 824709437046039679}
   - {fileID: 8032937708775506171}
   draggerNum: 0
+  boardStack: 0
+  dragReference: {fileID: 0}
   isTweening: 0
   isEmptying: 0
   isTransferring: 0
@@ -107,7 +108,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5534754551031808508, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: tileColor
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_RootOrder
@@ -181,7 +182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5534754551031808508, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: tileColor
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_RootOrder
@@ -255,7 +256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5534754551031808508, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: tileColor
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_RootOrder
@@ -340,7 +341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5534754551031808508, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: tileColor
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_RootOrder
@@ -425,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5534754551031808508, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: tileColor
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939171485214600134, guid: 2b0c99ebc63ef5f4cb0bbf76d07704ed, type: 3}
       propertyPath: m_RootOrder
