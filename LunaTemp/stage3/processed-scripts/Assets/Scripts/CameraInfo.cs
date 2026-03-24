@@ -39,6 +39,7 @@ public class CameraInfo : MonoBehaviour
     public IEnumerator StartRolling()
     {
         yield return new WaitForEndOfFrame();
+        if (!IntroCamera) yield break;
 
         foreach (Transform t in transform)
         {

@@ -36,6 +36,7 @@ public class CTAManager : MonoBehaviour
     public void ShowWinCard()
     {
         if (GameOver) return;
+        Debug.Log("Showing Win Card");
 
         ConfettiController.Instance.OnGameWin();
         Analytics.LogEvent(Analytics.EventType.LevelWon);

@@ -85,7 +85,7 @@ public class IterationManager : MonoBehaviour
 
     public void CompleteGame()
     {
-        CTAManager.Instance.OpenAppLink(false);
         CTAManager.Instance.ShowWinCard();
+        CTAManager.Instance.OpenAppLink(true);
     }
 }

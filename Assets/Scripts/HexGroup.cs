@@ -1,10 +1,8 @@
 using DG.Tweening;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+using TMPro;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public enum GroupType
 {
@@ -26,6 +24,9 @@ public class HexGroup : MonoBehaviour
     [Header ("Board Stacks")]
     public bool boardStack;
     public HexGroup dragReference;
+    [SerializeField] Transform pointsPos;
+    [SerializeField] TextMeshProUGUI pointsTxt;
+    [SerializeField] GameObject pointsPrefab;
 
     [Header ("Boolean Checks")]
     public bool isTweening;
@@ -54,6 +55,12 @@ public class HexGroup : MonoBehaviour
     void Start()
     {
         oldPosition = transform.position;
+        //if (boardStack)
+        //{
+        //    pointsTxt = Instantiate(pointsPrefab, GameManager.Instance.pointsCanvas.transform).GetComponent<TextMeshProUGUI>();
+        //    pointsTxt.text = tilesNeeded.ToString();
+        //    pointsTxt.transform.position = pointsPos.position;
+        //}
 
         UpdateTileCount();
     }
@@ -62,9 +69,9 @@ public class HexGroup : MonoBehaviour
     public void UpdateTileCount()
     {
         HexTiles.Clear();
-        if (transform.childCount > 0)
+        if (transform.childCount > 1)
         {
-            foreach (Transform t in transform) HexTiles.Add(t.GetComponent<HexTiles>());
+            foreach (Transform t in transform) { if(t.GetComponent<HexTiles>()) HexTiles.Add(t.GetComponent<HexTiles>()); }
             stackColor = HexTiles[0].tileColor;
         }
 
@@ -182,19 +189,18 @@ public class HexGroup : MonoBehaviour
                         hit.collider.GetComponentInParent<HexBase>().occupied = true;
                         transform.parent.GetComponentInParent<HexBase>().occupiedHex = this;
 
+                        dragReference.dragReference = null;
+                        dragReference = null;
+
+                        Debug.Log(transform.parent.name);
                         GameManager.Instance.UpdateAllMixers();
+                        Debug.Log(stackColor);
                         GameManager.Instance.hexDraggers.Remove(this);
                         CheckForPossibleTransfers();
 
-                        foreach (HexGroup board in GameManager.Instance.hexBoard)
-                        {
-                            if (board.dragReference == this)
-                            {
-                                board.dragReference = null;
-                                break;
-                            }
-                        }
-                        GameManager.Instance.CreateNewDragger(draggerNum, false);
+                        StartCoroutine(GameManager.Instance.CreateNewDragger(draggerNum, false, 0.25f));
+
+                        StartCoroutine(GameManager.Instance.CheckAllOccupied());
 
                     });
                     transform.SetParent(hit.collider.transform);
@@ -222,7 +228,11 @@ public class HexGroup : MonoBehaviour
             {
                 if (!hex.isTransferring && !hex.isEmptying)
                 {
-                    if (hex.boardStack) { hex.dragReference = null; GameManager.Instance.hexBoard.Remove(hex); }
+                    if (hex.boardStack)
+                    {
+                        //hex.dragReference = null; 
+                        GameManager.Instance.hexBoard.Remove(hex);
+                    }
 
                     TransferTiles(hex);
                     return;
@@ -236,7 +246,7 @@ public class HexGroup : MonoBehaviour
         int index = 0;
         isTransferring = true;
         receiver.isTransferring = true;
-        if (receiver.boardStack) GameManager.Instance.UpdateScore(tilesNeeded);
+        //if (receiver.boardStack) receiver.pointsTxt.gameObject.SetActive(false);
 
         Sequence transfer = DOTween.Sequence();
         for (int i = HexTiles.Count - 1; i > -1; i--)
@@ -249,7 +259,8 @@ public class HexGroup : MonoBehaviour
             Vector3 newPos = receiver.HexTiles[receiver.HexTiles.Count - 1].transform.position + (Vector3.up * (0.2f * index));
             transfer.Insert(TransferDelay * index, tiles.transform.DOJump(newPos, 0.2f * (index + 1), 1, TransferTime)
             .OnStart(() => { AudioManager.Instance.PlaySFX("Transfer"); })
-                .OnComplete(() => { tiles.transform.eulerAngles = Vector3.zero; }));
+                .OnComplete(() => { tiles.transform.eulerAngles = Vector3.zero;
+                }));
             transfer.Insert(TransferDelay * index, childTile.transform.DOLocalRotate(Vector3.right * 90, TransferTime))
                 .OnComplete(() => { childTile.transform.localEulerAngles = Vector3.right * 270; });
 
@@ -278,6 +289,8 @@ public class HexGroup : MonoBehaviour
 
         if (HexTiles.Count >= tilesNeeded)
         {
+            //if (boardStack) { GameManager.Instance.UpdateScore(tilesNeeded); }
+            GameManager.Instance.UpdateScore(tilesNeeded);
             isEmptying = true;
 
             int index = 0;
@@ -285,13 +298,16 @@ public class HexGroup : MonoBehaviour
             for (int i = HexTiles.Count - 1; i > -1; i--)
             {
                 HexTiles tiles = HexTiles[i];
-                merge.Insert(MergeDelay * index, tiles.transform.DOScale(0.1f, MergeTime).OnComplete(() => { tiles.transform.localScale = Vector3.zero; }));
+                merge.Insert(MergeDelay * index, tiles.transform.DOScale(0.1f, MergeTime).OnStart(() => { AudioManager.Instance.PlaySFX("Pickup"); })
+                    .OnComplete(() => { tiles.transform.localScale = Vector3.zero; }));
                 index++;
             }
 
             merge.OnComplete(() =>
             {
+                if (pointsTxt) DestroyImmediate(pointsTxt.gameObject);
                 StartCoroutine(DelayFullMerge());
+                //DelayFullMerge();
             });
 
             merge.Play();
@@ -300,11 +316,12 @@ public class HexGroup : MonoBehaviour
 
     public IEnumerator DelayFullMerge()
     {
-        yield return new WaitUntil(() => transform.childCount == 0);
+        yield return new WaitForSeconds(0.125f);
         GetComponentInParent<HexBase>().sparkleVFX.Play();
         AudioManager.Instance.PlaySFX("FullStack");
 
         isEmptying = false;
+
         UpdateTileCount();
     }
 
@@ -328,13 +345,16 @@ public class HexGroup : MonoBehaviour
         {
             if (bases.occupied)
             {
-                if (bases.occupiedHex.boardStack)
+                if (!bases.occupiedHex.isEmptying && !bases.occupiedHex.isTransferring)
                 {
-                    nearbyHex.Insert(0, bases.occupiedHex);
-                }
-                else
-                {
-                    nearbyHex.Add(bases.occupiedHex);
+                    if (bases.occupiedHex.boardStack)
+                    {
+                        nearbyHex.Insert(0, bases.occupiedHex);
+                    }
+                    else
+                    {
+                        nearbyHex.Add(bases.occupiedHex);
+                    }
                 }
             }
         }

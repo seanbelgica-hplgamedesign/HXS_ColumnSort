@@ -22,6 +22,7 @@
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/Managers/CTAManager.cs",
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/ConfettiController.cs",
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/ContettiFall.cs",
+      "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/Managers/LevelManager.cs",
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/CameraInfo.cs",
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Core/Services/IAudioService.cs",
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Core/Services/ServicesLocator.cs"
@@ -102,6 +103,9 @@
     ],
     [
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleUtils.cs"
+    ],
+    [
+      "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/ButtonInfo.cs"
     ],
     [
       "D:/Documents/GitHub/HXS_ColumnSort/LunaTemp/stage3/processed-scripts/Assets/Scripts/DontDestroy.cs"

@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public int requiredScore;
     [SerializeField] TextMeshProUGUI scoreTxt;
     [SerializeField] Image scoreFill;
+    public GameObject pointsCanvas;
     [SerializeField] bool easyMode;
     [SerializeField] bool mediumMode;
     [SerializeField] bool hardMode;
@@ -82,12 +83,21 @@ public class GameManager : MonoBehaviour
             DestroyImmediate(drag);
         }
 
-        for (int i = 0; i < 3; i++) { CreateNewDragger(i + 1, true); }
+        for (int i = 0; i < 3; i++) { StartCoroutine(CreateNewDragger(i + 1, true, 0)); }
     }
 
-    public void CreateNewDragger(int dragNum, bool first)
+    public IEnumerator CreateNewDragger(int dragNum, bool first, float wait)
     {
-        bool noReferenceCheck = true; foreach (HexGroup board in hexBoard) if (!board.dragReference) { noReferenceCheck = false; break; } if (noReferenceCheck) return;
+        yield return new WaitForEndOfFrame();
+
+        bool noReferenceCheck = true; foreach (HexGroup board in hexBoard) if (!board.dragReference) { noReferenceCheck = false; break; } if (noReferenceCheck) yield break;
+
+        bool anim = false;
+        foreach (HexGroup board in hexBoard)
+        {
+            if (!board.dragReference) { if (!board.isEmptying && !board.isTransferring) anim = true; break; }
+        }
+        if (!anim) yield break;
 
         if (hexDragParent.transform.GetChild(dragNum).childCount != 0)
         {
@@ -101,15 +111,17 @@ public class GameManager : MonoBehaviour
         drag.draggerNum = dragNum;
         drag.transform.localScale = Vector3.zero;
         drag.transform.DOScale(1, 0.25f);
+
         if (!first)
         {
             int index;
             while (true)
             {
                 index = Random.Range(0, hexBoard.Count);
-                if (!hexBoard[index].dragReference)
+                if (!hexBoard[index].dragReference && !hexBoard[index].isEmptying && !hexBoard[index].isTransferring)
                 {
                     hexBoard[index].dragReference = drag;
+                    drag.dragReference = hexBoard[index];
                     break;
                 }
             }
@@ -125,10 +137,15 @@ public class GameManager : MonoBehaviour
             {
                 if (!hexBoard[i].dragReference)
                 {
-                    if (hexBoard[i].stackColor == target) { hexBoard[i].dragReference = drag; drag.RandomizeTile(hexBoard[i].stackColor); return; }
+                    if (hexBoard[i].stackColor == target)
+                    {
+                        hexBoard[i].dragReference = drag;
+                        drag.dragReference = hexBoard[i]; 
+                        drag.RandomizeTile(hexBoard[i].stackColor); yield break;
+                    }
                 }
             }
-            
+
         }
     }
 
@@ -140,8 +157,11 @@ public class GameManager : MonoBehaviour
         {
             if (bases.occupied)
             {
-                currentMixers.Add(bases.occupiedHex);
-                if (bases.occupiedHex.boardStack) { hexBoard.Add(bases.occupiedHex); }
+                if (!bases.occupiedHex.isEmptying)
+                {
+                    currentMixers.Add(bases.occupiedHex);
+                    if (bases.occupiedHex.boardStack) { hexBoard.Add(bases.occupiedHex); }
+                }
             }
         }
 
@@ -163,7 +183,7 @@ public class GameManager : MonoBehaviour
         if (allOccupied)
         {
             Debug.Log("All Bases have been Occupied");
-            CTAManager.Instance.ShowLoseCard();
+            CTAManager.Instance.ShowWinCard();
         }
     }
 
@@ -172,25 +192,25 @@ public class GameManager : MonoBehaviour
     {
         if (score == 0) { currentScore = 0; } //Reset Score
 
-        currentScore += score;
-        scoreTxt.text = currentScore + " / " + requiredScore;
-        float newFill = (float)currentScore / (float)requiredScore;
-        scoreFill.DOKill();
-        scoreFill.DOFillAmount(newFill, newFill);
-
-        if (currentScore == requiredScore) StartCoroutine(ShowLevelSelector());
+        if (currentScore < requiredScore)
+        {
+            currentScore += score;
+            scoreTxt.text = currentScore + " / " + requiredScore;
+            float newFill = (float)currentScore / (float)requiredScore;
+            scoreFill.DOKill();
+            if (currentScore == requiredScore) LevelManager.Instance.levelPicking = true;
+            scoreFill.DOFillAmount(newFill, newFill * 2).OnComplete(() => { if (currentScore == requiredScore) ShowLevelSelector(); });
+        }
     }
 
-    public IEnumerator ShowLevelSelector()
+    public void ShowLevelSelector()
     {
-        yield return new WaitForSeconds(1f);
-
         Debug.Log("You win!");
         if (requiredScore == 40) easyMode = true;
         if (requiredScore == 150) mediumMode = true;
         if (requiredScore == 250) hardMode = true;
 
-        if (easyMode && mediumMode && hardMode) { IterationManager.Instance.CompleteGame(); yield break; } //All Mode Completed
+        if (easyMode && mediumMode && hardMode) { IterationManager.Instance.CompleteGame(); return; } //All Mode Completed
 
         currentScore = 0;
         LevelManager.Instance.OpenLevelSelector(mediumMode, hardMode);

@@ -10,7 +10,8 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] CanvasGroup tutorialPanel;
     [SerializeField] RectTransform tutorialText;
     [SerializeField] RectTransform tutorialTiles;
-    [SerializeField] RectTransform handTool;
+    public GameObject handTool;
+    [SerializeField] RectTransform dropTarget;
     [SerializeField] Vector2 oldStarter;
     [SerializeField] Vector2 starterPos;
     [SerializeField] Vector2 baseP;
@@ -45,7 +46,7 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
-        //if (GameManager.Instance.IsTransferring) { currentTimer = 3; return; }
+        if (LevelManager.Instance.levelPicking) { currentTimer = 3; return; }
         foreach (HexGroup h in GameManager.Instance.currentMixers) { if (h.isEmptying) { currentTimer = 3; return; } if (h.isTransferring) { currentTimer = 3; return; } }
 
         if (!IntroAnim && !CTAManager.Instance.GameOver)
@@ -89,7 +90,7 @@ public class TutorialManager : MonoBehaviour
     public void ResetTimer()
     {
         currentTimer = 3; handTool.GetComponent<CanvasGroup>().alpha = 0; timerCalled = false;
-        handTool.DOKill();
+        handTool.GetComponent<RectTransform>().DOKill();
     }
 
     private IEnumerator DoIntro()
@@ -99,12 +100,16 @@ public class TutorialManager : MonoBehaviour
         tutorialPanel.DOFade(1, 0.25f);
         tutorialTiles.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         tutorialText.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        GameManager.Instance.hexDraggers[0].draggable = false;
-        GameManager.Instance.hexDraggers[2].draggable = false;
         handTool.GetComponent<CanvasGroup>().alpha = 1;
-        handTool.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        GetStarterPos();
 
+        Sequence hand = DOTween.Sequence();
+        hand.Append(handTool.GetComponent<RectTransform>().DOScale(0.9f, 0.5f).SetLoops(5, LoopType.Yoyo));
+        hand.Append(handTool.GetComponent<RectTransform>().DOScale(1f, 0f));
+        hand.Append(handTool.GetComponent<RectTransform>().DOAnchorPos(dropTarget.anchoredPosition, 0.5f));
+        hand.Append(handTool.GetComponent<RectTransform>().DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo));
+        hand.Play();
+
+        GetStarterPos();
         StartCoroutine(IntroDropTile());
     }
 
@@ -114,9 +119,6 @@ public class TutorialManager : MonoBehaviour
         tutorialPanel.DOFade(0, 0.25f);
         tutorialTiles.DOKill();
         tutorialText.DOKill();
-        
-        GameManager.Instance.hexDraggers[0].draggable = true;
-        GameManager.Instance.hexDraggers[2].draggable = true;
 
         ResetTimer();
         IntroAnim = false;
@@ -128,11 +130,10 @@ public class TutorialManager : MonoBehaviour
         if (IntroAnim)
         {
             starterPos = dragPos[1].anchoredPosition;
-            handTool.anchoredPosition = starterPos;
+            handTool.GetComponent<RectTransform>().anchoredPosition = starterPos;
         }
         else
         {
-            dragger = null;
             while (true)
             {
                 if (GameManager.Instance.currentHexDrag)
@@ -149,28 +150,32 @@ public class TutorialManager : MonoBehaviour
                         }
                         x++;
                     }
-                    handTool.anchoredPosition = starterPos;
+                    handTool.GetComponent<RectTransform>().anchoredPosition = starterPos;
                     return;
                 }
                 else
                 {
-                    foreach (HexBase b in GameManager.Instance.hexBases)
+                    foreach (HexGroup drag in GameManager.Instance.hexDraggers)
                     {
-                        if (b.occupied)
+                        foreach (HexBase b in GameManager.Instance.hexBases)
                         {
-                            int index = 0;
-                            foreach (HexGroup drag in GameManager.Instance.hexDraggers)
+                            if (b.occupied)
                             {
-                                if (drag != GameManager.Instance.emptyDrag && drag.topTile.tileColor == b.occupiedHex.topTile.tileColor)
+                                if (drag.stackColor == b.occupiedHex.stackColor)
                                 {
-                                    //Debug.Log("Choosing held hand");
-                                    oldStarter = starterPos;
-                                    dragger = GameManager.Instance.hexDraggers[index];
-                                    starterPos = dragPos[index].anchoredPosition;
-                                    handTool.anchoredPosition = starterPos;
-                                    return;
+                                    foreach (HexBase near in b.nearbyBases)
+                                    {
+                                        if (!near.occupied)
+                                        {
+                                            //Debug.Log("Choosing held hand");
+                                            oldStarter = starterPos;
+                                            dragger = drag;
+                                            starterPos = dragPos[drag.draggerNum - 1].anchoredPosition;
+                                            handTool.GetComponent<RectTransform>().anchoredPosition = starterPos;
+                                            return;
+                                        }
+                                    }
                                 }
-                                index++;
                             }
                         }
                     }
@@ -186,7 +191,7 @@ public class TutorialManager : MonoBehaviour
                         oldStarter = starterPos;
                         dragger = GameManager.Instance.hexDraggers[x];
                         starterPos = dragPos[x].anchoredPosition;
-                        handTool.anchoredPosition = starterPos;
+                        handTool.GetComponent<RectTransform>().anchoredPosition = starterPos;
                         return;
                     }
                     tries--;
@@ -204,7 +209,7 @@ public class TutorialManager : MonoBehaviour
             {
                 if (b.occupied) //Check if a base is occupied
                 {
-                    if (b.occupiedHex.topTile.tileColor == dragger.topTile.tileColor) // Check if toptile color is the same with dragger's toptile color
+                    if (b.occupiedHex.stackColor == dragger.stackColor) // Check if toptile color is the same with dragger's toptile color
                     {
                         foreach (HexBase nearby in b.nearbyBases) //Look for any nearby base
                         {
@@ -252,14 +257,14 @@ public class TutorialManager : MonoBehaviour
         if (DoAnim)
         {
             handTool.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
-            handTool.localScale = Vector3.one;
-            handTool.DOKill();
-            handTool.DOScale(0.9f, 0.5f).SetLoops(3, LoopType.Yoyo).OnComplete(() =>
+            handTool.GetComponent<RectTransform>().localScale = Vector3.one;
+            handTool.GetComponent<RectTransform>().DOKill();
+            handTool.GetComponent<RectTransform>().DOScale(0.9f, 0.5f).SetLoops(3, LoopType.Yoyo).OnComplete(() =>
             {
-                handTool.DOAnchorPos(baseP, 0.75f).OnComplete(() =>
+                handTool.GetComponent<RectTransform>().DOAnchorPos(baseP, 0.75f).OnComplete(() =>
                 {
-                    handTool.localScale = Vector3.one;
-                    handTool.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+                    handTool.GetComponent<RectTransform>().localScale = Vector3.one;
+                    handTool.GetComponent<RectTransform>().DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
                 });
             });
         }
@@ -267,7 +272,7 @@ public class TutorialManager : MonoBehaviour
 
     public void ImmediateFreeBase()
     {
-        handTool.DOKill();
+        handTool.GetComponent<RectTransform>().DOKill();
         if (oldStarter != starterPos) { baseP = GetRandomBase(); }
 
         int x = 0;
@@ -277,9 +282,9 @@ public class TutorialManager : MonoBehaviour
             x++;
         }
         handTool.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
-        handTool.localScale = Vector3.one;
-        handTool.DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        handTool.anchoredPosition = baseP;
+        handTool.GetComponent<RectTransform>().localScale = Vector3.one;
+        handTool.GetComponent<RectTransform>().DOScale(0.9f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        handTool.GetComponent<RectTransform>().anchoredPosition = baseP;
     }
 
     public void UpdateTutorialDragger(HexGroup d)
@@ -301,6 +306,22 @@ public class TutorialManager : MonoBehaviour
                 return;
             }
             index++;
+        }
+    }
+
+    public void UpdatePositions(GameObject baseParent)
+    {
+        baseParent.transform.SetParent(this.transform);
+
+        basePos.Clear();
+        foreach (Transform t in baseParent.transform.GetChild(0))
+        {
+            basePos.Add(t.GetComponent<RectTransform>());
+        }
+        dragPos.Clear();
+        foreach (Transform t in baseParent.transform.GetChild(1))
+        {
+            dragPos.Add(t.GetComponent<RectTransform>());
         }
     }
 }
