@@ -93,7 +93,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 602760245094790642}
   occupied: 1
   sparkleVFX: {fileID: 2301717589005559379}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &5292194660220071566
 BoxCollider:
@@ -174,7 +174,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 8969138271686154656}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &8033435970566738378
 BoxCollider:
@@ -252,7 +252,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 104519930218279579}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &2275492357052711386
 BoxCollider:
@@ -329,7 +329,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 4956814339763236651}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &8926516139723347646
 BoxCollider:
@@ -406,7 +406,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 1661114563360383559}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &6357755213577009927
 BoxCollider:
@@ -483,7 +483,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 564421189498149112}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &7926419865747548844
 BoxCollider:
@@ -561,7 +561,7 @@ MonoBehaviour:
   occupiedHex: {fileID: 0}
   occupied: 0
   sparkleVFX: {fileID: 6449990533483935401}
-  originalColor: {fileID: 2100000, guid: 3f591a5329078e74f907bd60ffbcfd33, type: 2}
+  originalColor: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
   clickedColor: {fileID: 2100000, guid: a30a3f7f63f697e4487e9ffa0c121aac, type: 2}
 --- !u!65 &532174081859511003
 BoxCollider:
@@ -945,6 +945,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -1464,6 +1468,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -1679,6 +1687,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -1795,6 +1807,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -2010,6 +2026,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -2126,6 +2146,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base
@@ -2242,6 +2266,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: dab0ae1738dd99a4a9b06c3c9c94bd49, type: 2}
     - target: {fileID: 919132149155446097, guid: d0a45aa9d98722c4b9ce8fa469129656, type: 3}
       propertyPath: m_Name
       value: Hex_Base

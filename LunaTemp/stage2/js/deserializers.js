@@ -1236,12 +1236,16 @@ Deserializers["LevelManager"] = function (request, data, root) {
   request.r(i815[11], i815[12], 0, i814, 'hardChoice')
   request.r(i815[13], i815[14], 0, i814, 'onePos')
   request.r(i815[15], i815[16], 0, i814, 'twoPos')
-  request.r(i815[17], i815[18], 0, i814, 'easyLevel')
-  request.r(i815[19], i815[20], 0, i814, 'easyTutorial')
-  request.r(i815[21], i815[22], 0, i814, 'mediumLevel')
-  request.r(i815[23], i815[24], 0, i814, 'mediumTutorial')
-  request.r(i815[25], i815[26], 0, i814, 'hardLevel')
-  request.r(i815[27], i815[28], 0, i814, 'hardTutorial')
+  request.r(i815[17], i815[18], 0, i814, 'levelLayout')
+  request.r(i815[19], i815[20], 0, i814, 'easyLevel')
+  request.r(i815[21], i815[22], 0, i814, 'easyTutorial')
+  request.r(i815[23], i815[24], 0, i814, 'easySprite')
+  request.r(i815[25], i815[26], 0, i814, 'mediumLevel')
+  request.r(i815[27], i815[28], 0, i814, 'mediumTutorial')
+  request.r(i815[29], i815[30], 0, i814, 'mediumSprite')
+  request.r(i815[31], i815[32], 0, i814, 'hardLevel')
+  request.r(i815[33], i815[34], 0, i814, 'hardTutorial')
+  request.r(i815[35], i815[36], 0, i814, 'hardSprite')
   return i814
 }
 
@@ -2457,7 +2461,7 @@ Deserializers.productName = "HXS_ColumnSort";
 
 Deserializers.lunaInitializationTime = "03/13/2026 07:02:06";
 
-Deserializers.lunaDaysRunning = "11.3";
+Deserializers.lunaDaysRunning = "12.1";
 
 Deserializers.lunaVersion = "6.3.0";
 
@@ -2513,7 +2517,7 @@ Deserializers.graphicsConstraint = 28;
 
 Deserializers.linearColorSpace = false;
 
-Deserializers.buildID = "90e08941-a5d3-4c6f-a054-d8766ed771ca";
+Deserializers.buildID = "d8129d07-06a8-4a9d-a888-2f72a6d74d6d";
 
 Deserializers.runtimeInitializeOnLoadInfos = [[["UnityEngine","Experimental","Rendering","ScriptableRuntimeReflectionSystemSettings","ScriptingDirtyReflectionSystemInstance"]],[["Unity","VisualScripting","RuntimeVSUsageUtility","RuntimeInitializeOnLoadBeforeSceneLoad"]],[],[],[]];
 

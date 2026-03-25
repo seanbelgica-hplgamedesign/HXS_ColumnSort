@@ -1,7 +1,9 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -16,16 +18,21 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject hardChoice;
     [SerializeField] RectTransform onePos;
     [SerializeField] RectTransform twoPos;
+    [SerializeField] Image levelLayout;
+    //[SerializeField] TextMeshProUGUI levelTxt;
 
     [Header("Levels & Tutorial")]
     [SerializeField] GameObject easyLevel;
     [SerializeField] GameObject easyTutorial;
+    [SerializeField] Sprite easySprite;
     [Space(10)]
     [SerializeField] GameObject mediumLevel;
     [SerializeField] GameObject mediumTutorial;
+    [SerializeField] Sprite mediumSprite;
     [Space(10)]
     [SerializeField] GameObject hardLevel;
     [SerializeField] GameObject hardTutorial;
+    [SerializeField] Sprite hardSprite;
 
     #region Instance Calling
     public static LevelManager Instance;
@@ -83,6 +90,9 @@ public class LevelManager : MonoBehaviour
         if (level == 0)
         {
             Debug.Log("Picking easy level");
+            levelLayout.sprite = easySprite; levelLayout.SetNativeSize();
+            //levelTxt.text = "EASY LEVEL";
+
             tutorial = Instantiate(easyTutorial, TutorialManager.Instance.transform);
             tutorial.name = easyTutorial.name;
 
@@ -96,6 +106,9 @@ public class LevelManager : MonoBehaviour
         else if (level == 1)
         {
             Debug.Log("Picking medium level");
+            levelLayout.sprite = mediumSprite; levelLayout.SetNativeSize();
+            //levelTxt.text = "MEDIUM LEVEL";
+
             tutorial = Instantiate(mediumTutorial, TutorialManager.Instance.transform);
             tutorial.name = mediumTutorial.name;
 
@@ -109,6 +122,9 @@ public class LevelManager : MonoBehaviour
         else
         {
             Debug.Log("Picking hard level");
+            levelLayout.sprite = hardSprite; levelLayout.SetNativeSize();
+            //levelTxt.text = "HARD LEVEL";
+
             tutorial = Instantiate(hardTutorial, TutorialManager.Instance.transform);
             tutorial.name = hardTutorial.name;
 

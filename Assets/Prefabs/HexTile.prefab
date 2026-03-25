@@ -78,16 +78,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileColor: 0
-  singleTile:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 546791630989088051}
-  perTiles: 1.05
-  perSingleTiles: 0.175
-  sequenceDuration: 0.5
 --- !u!1001 &1527220558431623832
 PrefabInstance:
   m_ObjectHideFlags: 0
