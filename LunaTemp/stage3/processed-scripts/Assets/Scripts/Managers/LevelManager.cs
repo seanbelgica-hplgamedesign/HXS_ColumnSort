@@ -19,6 +19,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] RectTransform onePos;
     [SerializeField] RectTransform twoPos;
     [SerializeField] Image levelLayout;
+    [SerializeField] Vector2 origHand;
     //[SerializeField] TextMeshProUGUI levelTxt;
 
     [Header("Levels & Tutorial")]
@@ -51,6 +52,7 @@ public class LevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        origHand = TutorialManager.Instance.handTool.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta;
         PickLevel(0);
     }
 
@@ -60,11 +62,12 @@ public class LevelManager : MonoBehaviour
         
     }
 
-    public void OpenLevelSelector(bool med, bool hard)
+    public IEnumerator OpenLevelSelector(bool med, bool hard)
     {
-        RectTransform hand = TutorialManager.Instance.handTool.GetComponent<RectTransform>();
+        yield return new WaitForSeconds(0.5f);
+        GameManager.Instance.levelComplete.alpha = 0;
 
-        AudioManager.Instance.PlaySFX("Winner");
+        RectTransform hand = TutorialManager.Instance.handTool.GetComponent<RectTransform>();
 
         if (!med && hard) { medChoice.SetActive(true); hand.anchoredPosition = onePos.anchoredPosition; }
         else if (!hard && med) { hardChoice.SetActive(true); hand.anchoredPosition = onePos.anchoredPosition; }
@@ -85,6 +88,7 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.hexBases.Clear();
         if (level != 0) AudioManager.Instance.PlaySFX("Pickup");
 
+        RectTransform hand = TutorialManager.Instance.handTool.GetComponent<RectTransform>();
         DestroyImmediate(currentTutorial); DestroyImmediate(currentLevel);
         GameObject tutorial; GameObject lvl;
         if (level == 0)
@@ -95,6 +99,7 @@ public class LevelManager : MonoBehaviour
 
             tutorial = Instantiate(easyTutorial, TutorialManager.Instance.transform);
             tutorial.name = easyTutorial.name;
+            hand.GetChild(0).GetComponent<RectTransform>().sizeDelta = origHand;
 
             lvl = Instantiate(easyLevel, gameField.transform);
             lvl.name = easyLevel.name;
@@ -111,13 +116,14 @@ public class LevelManager : MonoBehaviour
 
             tutorial = Instantiate(mediumTutorial, TutorialManager.Instance.transform);
             tutorial.name = mediumTutorial.name;
+            hand.GetChild(0).GetComponent<RectTransform>().sizeDelta = origHand * 0.75f;
 
             lvl = Instantiate(mediumLevel, gameField.transform);
             lvl.name = mediumLevel.name;
             foreach (Transform t in lvl.transform) GameManager.Instance.hexBases.Add(t.GetComponent<HexBase>());
-            GameManager.Instance.requiredScore = 150;
-            Camera.main.DOOrthoSize(9, 0.25f);
-            Camera.main.transform.DOMoveZ(-4.25f, 0.25f);
+            GameManager.Instance.requiredScore = 250;
+            Camera.main.DOOrthoSize(11, 0.25f);
+            Camera.main.transform.DOMoveZ(-2.75f, 0.25f);
         }
         else
         {
@@ -127,16 +133,17 @@ public class LevelManager : MonoBehaviour
 
             tutorial = Instantiate(hardTutorial, TutorialManager.Instance.transform);
             tutorial.name = hardTutorial.name;
+            hand.GetChild(0).GetComponent<RectTransform>().sizeDelta = origHand * 0.5f;
 
             lvl = Instantiate(hardLevel, gameField.transform);
             lvl.name = hardLevel.name;
             foreach (Transform t in lvl.transform) GameManager.Instance.hexBases.Add(t.GetComponent<HexBase>());
-            GameManager.Instance.requiredScore = 250;
-            Camera.main.DOOrthoSize(11, 0.25f);
-            Camera.main.transform.DOMoveZ(-2.75f, 0.25f);
+            GameManager.Instance.requiredScore = 600;
+            Camera.main.DOOrthoSize(12.5f, 0.25f);
+            Camera.main.transform.DOMoveZ(0, 0.25f);
         }
         currentTutorial = tutorial; currentLevel = lvl;
-        TutorialManager.Instance.UpdatePositions(tutorial);
+        TutorialManager.Instance.UpdatePositions(tutorial, level);
         GameManager.Instance.UpdateAllMixers();
         GameManager.Instance.RemakeDraggers();
 
@@ -145,7 +152,6 @@ public class LevelManager : MonoBehaviour
         GetComponent<CanvasGroup>().DOFade(0, 0.25f);
 
         medChoice.SetActive(false); hardChoice.SetActive(false); twoChoices.SetActive(false);
-        RectTransform hand = TutorialManager.Instance.handTool.GetComponent<RectTransform>();
         hand.DOKill();
         hand.GetComponent<CanvasGroup>().alpha = 0;
         hand.localScale = Vector3.one;

@@ -18,6 +18,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] HexGroup dragger;
     [SerializeField] List<RectTransform> dragPos;
     [SerializeField] List<RectTransform> basePos;
+    [SerializeField] GameObject sparklePrefab;
 
     [Header("Idle Timer")]
     [SerializeField] float currentTimer;
@@ -309,14 +310,24 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    public void UpdatePositions(GameObject baseParent)
+    public void UpdatePositions(GameObject baseParent, int lvl)
     {
         baseParent.transform.SetParent(this.transform);
 
         basePos.Clear();
+        int index = 0;
         foreach (Transform t in baseParent.transform.GetChild(0))
         {
             basePos.Add(t.GetComponent<RectTransform>());
+            GameObject sparkle = Instantiate(sparklePrefab, t.transform);
+            switch (lvl)
+            {
+                case 1: sparkle.GetComponent<RectTransform>().sizeDelta = sparklePrefab.GetComponent<RectTransform>().sizeDelta * 0.75f; break;
+                case 2: sparkle.GetComponent<RectTransform>().sizeDelta = sparklePrefab.GetComponent<RectTransform>().sizeDelta * 0.5f; break;
+                default: break;
+            }
+            GameManager.Instance.hexBases[index].sparkleVFX = sparkle.GetComponent<Animator>();
+            index++;
         }
         dragPos.Clear();
         foreach (Transform t in baseParent.transform.GetChild(1))

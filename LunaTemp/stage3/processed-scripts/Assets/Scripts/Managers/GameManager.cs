@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI scoreTxt;
     [SerializeField] Image scoreFill;
     public GameObject pointsCanvas;
+    public CanvasGroup levelComplete;
+    public ParticleSystem completeVFX;
     [SerializeField] bool easyMode;
     [SerializeField] bool mediumMode;
     [SerializeField] bool hardMode;
@@ -49,6 +51,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         LifeCycle.GameStarted();
         Analytics.LogEvent(Analytics.EventType.LevelStart);
         StartCoroutine(WaitForTap());
@@ -198,7 +202,6 @@ public class GameManager : MonoBehaviour
             scoreTxt.text = currentScore + " / " + requiredScore;
             float newFill = (float)currentScore / (float)requiredScore;
             scoreFill.DOKill();
-            if (currentScore == requiredScore) LevelManager.Instance.levelPicking = true;
             scoreFill.DOFillAmount(newFill, newFill * 2).OnComplete(() => { if (currentScore == requiredScore) ShowLevelSelector(); });
         }
     }
@@ -207,13 +210,14 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("You win!");
         if (requiredScore == 40) easyMode = true;
-        if (requiredScore == 150) mediumMode = true;
-        if (requiredScore == 250) hardMode = true;
+        if (requiredScore == 250) mediumMode = true;
+        if (requiredScore == 600) hardMode = true;
 
-        if (easyMode && mediumMode && hardMode) { IterationManager.Instance.CompleteGame(); return; } //All Mode Completed
+        if (mediumMode || hardMode) { IterationManager.Instance.CompleteGame(); return; } //Two Modes Completed
 
         currentScore = 0;
-        LevelManager.Instance.OpenLevelSelector(mediumMode, hardMode);
+
+        StartCoroutine(LevelManager.Instance.OpenLevelSelector(mediumMode, hardMode));
 
     }
 }

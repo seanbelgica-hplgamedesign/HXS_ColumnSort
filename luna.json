@@ -1722,10 +1722,6 @@
                 "excluded": true
             },
             {
-                "name": "UnityEngine.ParticleSystem.Particle",
-                "excluded": true
-            },
-            {
                 "name": "UnityEngine.Physics2D",
                 "excluded": true
             },
@@ -1971,10 +1967,6 @@
             },
             {
                 "name": "Luna.Unity.DTO.UnityEngine.Textures.Sprite",
-                "excluded": true
-            },
-            {
-                "name": "LunaUnity.Utils.Delay",
                 "excluded": true
             },
             {
@@ -7403,7 +7395,7 @@
             },
             {
                 "name": "DG.Tweening.Core.TweenManager.CapacityIncreaseMode",
-                "excluded": true
+                "excluded": false
             },
             {
                 "name": "DG.Tweening.Core.VisualManagerPreset",
@@ -14501,7 +14493,7 @@
                     },
                     {
                         "name": "NextDouble",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "NextBytes",
@@ -18037,7 +18029,7 @@
                     },
                     {
                         "name": "anchorMax#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "anchorMax#set",
@@ -18045,7 +18037,7 @@
                     },
                     {
                         "name": "anchorMin#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "anchorMin#set",
@@ -18089,7 +18081,7 @@
                     },
                     {
                         "name": "sizeDelta#set",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "rect#get",
@@ -19175,7 +19167,7 @@
                     },
                     {
                         "name": "sprite#set",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "overrideSprite#get",
@@ -19367,7 +19359,7 @@
                     },
                     {
                         "name": "SetNativeSize",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "IsRaycastLocationValid",
@@ -21925,7 +21917,7 @@
                     },
                     {
                         "name": "pixelsPerUnit#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "packed#get",
@@ -21953,7 +21945,7 @@
                     },
                     {
                         "name": "rect#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "border#get",
@@ -22249,7 +22241,7 @@
                 "instanceMethods": [
                     {
                         "name": "main#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "emission#get",
@@ -22325,7 +22317,7 @@
                     },
                     {
                         "name": "isPlaying#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "isPaused#get",
@@ -22453,11 +22445,11 @@
                     },
                     {
                         "name": "GetParticles",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "SetParticles",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "SetCustomParticleData",
@@ -23157,7 +23149,7 @@
                     },
                     {
                         "name": "referencePixelsPerUnit#get",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "referencePixelsPerUnit#set",
@@ -24529,7 +24521,7 @@
                     },
                     {
                         "name": "IncreaseCapacities",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "ManageOnRewindCallbackWhenAlreadyRewinded",
@@ -25569,7 +25561,7 @@
                     },
                     {
                         "name": "SetOptions$8",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "SetOptions$13",
@@ -25711,7 +25703,7 @@
                     },
                     {
                         "name": "WaitForCompletion",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "WaitForRewind",
@@ -25945,11 +25937,11 @@
                     },
                     {
                         "name": "TriggerAllConfetti",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "OnGameWin",
-                        "excluded": true
+                        "excluded": false
                     }
                 ]
             },
@@ -25967,15 +25959,15 @@
                     },
                     {
                         "name": "TriggerConfetti",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "StartFalling",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "FlutterLoop",
-                        "excluded": true
+                        "excluded": false
                     }
                 ]
             },
@@ -26015,7 +26007,7 @@
                     },
                     {
                         "name": "ShowWinCard",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "ShowLoseCard",
@@ -26023,6 +26015,10 @@
                     },
                     {
                         "name": "OpenAppLink",
+                        "excluded": false
+                    },
+                    {
+                        "name": "Update",
                         "excluded": false
                     }
                 ]
@@ -26119,6 +26115,10 @@
                     },
                     {
                         "name": "Awake",
+                        "excluded": false
+                    },
+                    {
+                        "name": "Update",
                         "excluded": false
                     }
                 ]
@@ -26225,7 +26225,7 @@
                     },
                     {
                         "name": "CompleteGame",
-                        "excluded": true
+                        "excluded": false
                     }
                 ]
             },
@@ -26279,7 +26279,7 @@
                     },
                     {
                         "name": "ImmediateFreeBase",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "UpdatePositions",
@@ -27203,11 +27203,11 @@
                     },
                     {
                         "name": "DOAnchorPosX",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "DOAnchorPosY",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "DOAnchorPos3D",
@@ -27661,7 +27661,7 @@
                     },
                     {
                         "name": "Range$1",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "Range",
@@ -28657,7 +28657,7 @@
                     },
                     {
                         "name": "ResizeInternalArray$1",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "AddFloatToInternalTextBackingArray",
@@ -29081,7 +29081,7 @@
                     },
                     {
                         "name": "WaitForCompletion",
-                        "excluded": true
+                        "excluded": false
                     },
                     {
                         "name": "WaitForRewind",
@@ -31307,7 +31307,7 @@
                     },
                     {
                         "name": "$clone",
-                        "excluded": true
+                        "excluded": false
                     }
                 ]
             },
@@ -33090,6 +33090,214 @@
                         "excluded": false
                     }
                 ]
+            },
+            {
+                "className": "LunaUnity.Utils.Delay",
+                "staticMethods": [],
+                "instanceMethods": [
+                    {
+                        "name": "init",
+                        "excluded": false
+                    },
+                    {
+                        "name": "ctor",
+                        "excluded": false
+                    },
+                    {
+                        "name": "Stop",
+                        "excluded": true
+                    },
+                    {
+                        "name": "Tick",
+                        "excluded": false
+                    }
+                ]
+            },
+            {
+                "className": "UnityEngine.ParticleSystem.Particle",
+                "staticMethods": [],
+                "instanceMethods": [
+                    {
+                        "name": "getDefaultValue",
+                        "excluded": true
+                    },
+                    {
+                        "name": "Handle#get",
+                        "excluded": false
+                    },
+                    {
+                        "name": "position#get",
+                        "excluded": false
+                    },
+                    {
+                        "name": "position#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "velocity#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "velocity#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "animatedVelocity#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "totalVelocity#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "remainingLifetime#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "remainingLifetime#set",
+                        "excluded": false
+                    },
+                    {
+                        "name": "lifetime#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "lifetime#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startLifetime#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startLifetime#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startColor#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startColor#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "color#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "color#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "randomSeed#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "randomSeed#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "randomValue#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "randomValue#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "axisOfRotation#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "axisOfRotation#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startSize#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startSize#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "size#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "size#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "startSize3D#get",
+                        "excluded": false
+                    },
+                    {
+                        "name": "startSize3D#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "rotation#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "rotation#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "rotation3D#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "rotation3D#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "angularVelocity#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "angularVelocity#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "angularVelocity3D#get",
+                        "excluded": true
+                    },
+                    {
+                        "name": "angularVelocity3D#set",
+                        "excluded": true
+                    },
+                    {
+                        "name": "ctor",
+                        "excluded": false
+                    },
+                    {
+                        "name": "GetCurrentSize",
+                        "excluded": true
+                    },
+                    {
+                        "name": "GetCurrentSize3D",
+                        "excluded": true
+                    },
+                    {
+                        "name": "GetCurrentColor",
+                        "excluded": true
+                    },
+                    {
+                        "name": "getHashCode",
+                        "excluded": true
+                    },
+                    {
+                        "name": "equals",
+                        "excluded": true
+                    },
+                    {
+                        "name": "$clone",
+                        "excluded": true
+                    }
+                ]
             }
         ],
         "stubberDataList": [],
@@ -33436,6 +33644,96 @@
                         "script": "",
                         "ext": "",
                         "name": "Assets/Fonts/Keep-Calm.asset"
+                    },
+                    {
+                        "maxWidth": 512,
+                        "maxHeight": 512,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/"
+                    },
+                    {
+                        "maxWidth": 128,
+                        "maxHeight": 128,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle01.png"
+                    },
+                    {
+                        "maxWidth": 256,
+                        "maxHeight": 256,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle02.png"
+                    },
+                    {
+                        "maxWidth": 128,
+                        "maxHeight": 128,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/Circle04.png"
+                    },
+                    {
+                        "maxWidth": 256,
+                        "maxHeight": 256,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/confetti_large.png"
+                    },
+                    {
+                        "maxWidth": 256,
+                        "maxHeight": 256,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/Flare01.png"
+                    },
+                    {
+                        "maxWidth": 128,
+                        "maxHeight": 128,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/Lana Studio/Hyper Casual FX/Textures/Flare03.png"
+                    },
+                    {
+                        "maxWidth": 512,
+                        "maxHeight": 512,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/VFX/"
+                    },
+                    {
+                        "maxWidth": 1024,
+                        "maxHeight": 1024,
+                        "format": "png32",
+                        "compression": "quantSize",
+                        "quality": 65,
+                        "script": "",
+                        "ext": "",
+                        "name": "Assets/VFX/Confetti FX/Textures/confetti4x4.png"
                     }
                 ]
             },

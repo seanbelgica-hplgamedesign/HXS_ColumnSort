@@ -8,7 +8,7 @@ public class HexBase : MonoBehaviour
     public List<HexBase> nearbyBases;
     public HexGroup occupiedHex;
     public bool occupied;
-    public ParticleSystem sparkleVFX;
+    public Animator sparkleVFX;
     public Material originalColor;
     public Material clickedColor;
 

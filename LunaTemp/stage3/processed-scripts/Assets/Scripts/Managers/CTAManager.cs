@@ -33,6 +33,14 @@ public class CTAManager : MonoBehaviour
     }
     #endregion
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ShowWinCard();
+        }
+    }
+
     public void ShowWinCard()
     {
         if (GameOver) return;

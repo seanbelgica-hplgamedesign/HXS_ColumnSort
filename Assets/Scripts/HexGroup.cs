@@ -289,6 +289,8 @@ public class HexGroup : MonoBehaviour
 
         if (HexTiles.Count >= tilesNeeded)
         {
+            GetComponentInParent<HexBase>().sparkleVFX.gameObject.SetActive(true);
+            GetComponentInParent<HexBase>().sparkleVFX.Play("Sparkle");
             //if (boardStack) { GameManager.Instance.UpdateScore(tilesNeeded); }
             GameManager.Instance.UpdateScore(tilesNeeded);
             isEmptying = true;
@@ -306,6 +308,14 @@ public class HexGroup : MonoBehaviour
             merge.OnComplete(() =>
             {
                 if (pointsTxt) DestroyImmediate(pointsTxt.gameObject);
+                if (GameManager.Instance.currentScore == GameManager.Instance.requiredScore)
+                {
+                    LevelManager.Instance.levelPicking = true;
+                    GameManager.Instance.levelComplete.DOFade(1, 0.5f);
+                    AudioManager.Instance.PlaySFX("Winner");
+                    //completeVFX.transform.position = Camera.main.transform.position + new Vector3(0, 0.15f, 1.75f);
+                    GameManager.Instance.completeVFX.Play();
+                }
                 StartCoroutine(DelayFullMerge());
                 //DelayFullMerge();
             });
@@ -317,7 +327,6 @@ public class HexGroup : MonoBehaviour
     public IEnumerator DelayFullMerge()
     {
         yield return new WaitForSeconds(0.125f);
-        GetComponentInParent<HexBase>().sparkleVFX.Play();
         AudioManager.Instance.PlaySFX("FullStack");
 
         isEmptying = false;
@@ -332,6 +341,7 @@ public class HexGroup : MonoBehaviour
             GameManager.Instance.currentMixers.Remove(this);
             transform.parent.GetComponent<HexBase>().occupied = false;
             transform.parent.GetComponent<HexBase>().occupiedHex = null;
+            transform.parent.GetComponent<HexBase>().sparkleVFX.gameObject.SetActive(false);
 
             GameManager.Instance.UpdateAllMixers();
             DestroyImmediate(this.gameObject);
@@ -341,15 +351,17 @@ public class HexGroup : MonoBehaviour
     public void UpdateNearbyTiles()
     {
         nearbyHex.Clear();
+        bool prio = false;
         foreach(HexBase bases in transform.parent.GetComponent<HexBase>().nearbyBases)
         {
             if (bases.occupied)
             {
                 if (!bases.occupiedHex.isEmptying && !bases.occupiedHex.isTransferring)
                 {
-                    if (bases.occupiedHex.boardStack)
+                    if (bases.occupiedHex.boardStack && !prio)
                     {
                         nearbyHex.Insert(0, bases.occupiedHex);
+                        prio = true;
                     }
                     else
                     {
