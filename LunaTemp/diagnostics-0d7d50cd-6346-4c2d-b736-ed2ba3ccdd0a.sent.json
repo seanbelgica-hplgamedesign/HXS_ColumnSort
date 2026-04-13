@@ -1,0 +1,396 @@
+{
+    "BuildID": "0d7d50cd-6346-4c2d-b736-ed2ba3ccdd0a",
+    "Command": "project:build",
+    "ProjectID": "7580e4ad9861cca4a8f47dfd6bc78b4a",
+    "ProjectStateHash": "75ccc052065c138558a706e284fedf588e080f8931d8e558aeb1982802c46b0c",
+    "StageCompletedAt": 3,
+    "EarliestFatalError": 0,
+    "StartTime": 1774832400440,
+    "EndTime": 1774832505428,
+    "PlaygroundUserID": 32569,
+    "OperatingSystem": "win32",
+    "UnityPackageID": null,
+    "TargetPlatform": "playground",
+    "UnityVersion": "2022.3.3f1",
+    "LunaVersion": "6.3.0",
+    "LogCount": 12,
+    "Logs": [
+        {
+            "LogID": "c84f71c0-3f88-4d9c-a611-861719bad381",
+            "Order": 11,
+            "Timestamp": 1774832505887,
+            "Stage": 3,
+            "ErrorType": 3,
+            "ErrorCode": "LP3007",
+            "Description": "You are not using any custom events",
+            "Details": [
+                "You are not using any custom events. It is recommended to use custom events to have a better understanding of the playable."
+            ],
+            "DescriptionValues": [
+                ""
+            ],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": null,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "9f159088-83a7-44d9-bf31-4e0c49ee36b4",
+            "Order": 11,
+            "Timestamp": 1774832505887,
+            "Stage": 3,
+            "ErrorType": 3,
+            "ErrorCode": "LP3012",
+            "Description": "You are not using the minimum recommended amount of LunaPlaygroundFields attributes.",
+            "Details": [
+                "You are not using the minimum recommended amount of LunaPlaygroundFields attributes, you are using: 1 and we recommend using a minimum of: 3. It allows you to configure your playable to different concepts to find the best variation, which can drastically improve playable performance on all ad networks."
+            ],
+            "DescriptionValues": [
+                "1",
+                "3"
+            ],
+            "DetailsValues": [
+                "1",
+                "3"
+            ],
+            "LogCount": 1,
+            "LinePosition": null,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "c681dad2-faf0-4497-9503-2cebea48df44",
+            "Order": 0,
+            "Timestamp": 1774832409917,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1030",
+            "Description": "TMP Font Asset uses unsupported 'Atlas Population Mode'",
+            "Details": [
+                "TMP Font Asset '{0}' uses Atlas Population Mode '{1}' which is not supported"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                "Font SDF",
+                "Dynamic"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "960ad6d9-467b-43b5-ad6a-76ca6dcc99ff",
+            "Order": 1,
+            "Timestamp": 1774832417734,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1030",
+            "Description": "TMP Font Asset uses unsupported 'Atlas Population Mode'",
+            "Details": [
+                "TMP Font Asset '{0}' uses Atlas Population Mode '{1}' which is not supported"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                "LiberationSans SDF - Fallback",
+                "Dynamic"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "68e6be71-b191-425f-928a-8dd1d553f78e",
+            "Order": 2,
+            "Timestamp": 1774832421544,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1007",
+            "Description": "Extensive use of mesh colliders",
+            "Details": [
+                "Usage of mesh colliders has negative effect on performance. You can use primitive colliders instead."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "4abe2594-552e-47cf-9fd6-19bbd37e5d7d",
+            "Order": 3,
+            "Timestamp": 1774832421545,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1014",
+            "Description": "We recommend running Runtime Analysis to find and remove all unused code",
+            "Details": [
+                "Navigate to the Runtime Analysis → Code tab to enable code stripping. Before uploading the playable, please make sure to have played all scenario’s of the playable in a development build to make Runtime Analysis work properly."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "deb35c4e-f42c-4c3c-a473-ca85e0e08000",
+            "Order": 4,
+            "Timestamp": 1774832421546,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1016",
+            "Description": "Extensive usage of ParticleSystem Component",
+            "Details": [
+                "There is extensive usage of the ParticleSystem component.\nExcessive usage of any component can be detrimental to performance on lower and in some cases higher end devices, consider reducing the amount the component is used.\nRecommended count: 10, current count 104."
+            ],
+            "DescriptionValues": [
+                "ParticleSystem"
+            ],
+            "DetailsValues": [
+                "ParticleSystem",
+                "10",
+                "104"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "9cb1f4e4-ac9a-4160-993e-a2bdf78af847",
+            "Order": 5,
+            "Timestamp": 1774832421558,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1027",
+            "Description": "This DOTween version is not supported",
+            "Details": [
+                "The incorrect DOTween version for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "8566c9d4-817d-4353-a835-65615c57be3f",
+            "Order": 6,
+            "Timestamp": 1774832421559,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1015",
+            "Description": "This TMP version is not fully supported",
+            "Details": [
+                "The incorrect Text Mesh Pro for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                ""
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "c44868f1-6869-44df-b0e6-a7a3b1685729",
+            "Order": 7,
+            "Timestamp": 1774832421559,
+            "Stage": 1,
+            "ErrorType": 0,
+            "ErrorCode": "LP1032",
+            "Description": "Package(s) is not supported in Luna",
+            "Details": [
+                "Currently package(s) com.unity.timeline are not supported in Luna. We recommend you to remove it and workaround it's functionality."
+            ],
+            "DescriptionValues": [
+                "com.unity.timeline (1.7.4)"
+            ],
+            "DetailsValues": [
+                "com.unity.timeline"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "D:/Documents/GitHub/HXS_ColumnSort/Packages\\manifest.json",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "3e79bdac-0647-4253-89c7-334401826bca",
+            "Order": 8,
+            "Timestamp": 1774832421561,
+            "Stage": 1,
+            "ErrorType": 3,
+            "ErrorCode": "LP1002",
+            "Description": "Repeat wrap mode used on a texture with non power-of-two dimensions, this might not be rendered correctly.",
+            "Details": [
+                "Repeat wrap mode used on 'LiberationSans SDF Atlas' texture at 'Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset' with non power-of-two dimensions, this might not be rendered correctly."
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [
+                "LiberationSans SDF Atlas",
+                "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+            ],
+            "LogCount": 1,
+            "LinePosition": 0,
+            "FilePath": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        },
+        {
+            "LogID": "eb4d96e2-f7a5-4759-bb11-33681d603703",
+            "Order": 9,
+            "Timestamp": 1774832421562,
+            "Stage": 1,
+            "ErrorType": 2,
+            "ErrorCode": "LP1010",
+            "Description": "Looks like a collider was scaled, this might affect performance.",
+            "Details": [
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Hex_Base",
+                "Ground",
+                "Hex_Base",
+                "Hex_Base (1)",
+                "Hex_Base (2)",
+                "Hex_Base (3)",
+                "Hex_Base (4)",
+                "Hex_Base (5)",
+                "Hex_Base (6)"
+            ],
+            "DescriptionValues": [],
+            "DetailsValues": [],
+            "LogCount": 105,
+            "LinePosition": 0,
+            "FilePath": "",
+            "ClassName": "",
+            "MemberName": "",
+            "Severity": 0
+        }
+    ]
+}
